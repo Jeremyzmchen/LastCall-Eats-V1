@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. 业务异常
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {
         ErrorCode errorCode = ex.getErrorCode();
@@ -25,7 +24,7 @@ public class GlobalExceptionHandler {
                 .status(errorCode.getHttpStatus())
                 .body(ApiResponse.fail(errorCode.getHttpStatus(), ex.getMessage()));
     }
-    // 2. 字段拼接异常 @valid
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
@@ -35,21 +34,21 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.fail(400, message));
     }
-    // 3. 鉴权异常
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException ex) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.fail(401, "Unauthorized"));
     }
-    // 4. 授权异常
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(ApiResponse.fail(403, "Forbidden"));
     }
-    // 5. 其余未知异常
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         log.error("Unexpected error", ex);
