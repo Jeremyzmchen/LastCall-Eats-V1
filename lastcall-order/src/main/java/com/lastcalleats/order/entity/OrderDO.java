@@ -37,11 +37,10 @@ public class OrderDO {
     @Column(nullable = false, length = 20)
     private OrderStatus status;
 
-    // 取货码（6位数字），下单时生成，支付后有效
+    // 支付成功后生成，6位数字
     @Column(name = "pickup_code", length = 6)
     private String pickupCode;
 
-    // 取货码是否已使用
     @Column(name = "pickup_code_used", nullable = false)
     private Boolean pickupCodeUsed = false;
 

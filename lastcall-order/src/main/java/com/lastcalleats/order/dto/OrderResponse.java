@@ -17,7 +17,7 @@ public class OrderResponse {
     private BigDecimal price;
     private String status;
 
-    // 取货码（仅支付成功后返回）
+    // 仅支付成功后返回
     private String pickupCode;
 
     private LocalDateTime createdAt;

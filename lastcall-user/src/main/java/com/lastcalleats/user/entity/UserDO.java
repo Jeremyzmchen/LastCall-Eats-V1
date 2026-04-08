@@ -7,11 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-
-/**
- * 目前加了注释的字段先保留，不作为V1版本内容
- */
-
+// 注释掉的字段为 V2 预留，暂不开发
 @Entity
 @Table(name = "user")
 @Getter

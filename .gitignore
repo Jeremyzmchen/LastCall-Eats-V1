@@ -102,3 +102,8 @@ build/
 *.ipr
 *.iws
 documents/
+
+# =====================
+# Local dev documentation
+# =====================
+DEV_GUIDE.md

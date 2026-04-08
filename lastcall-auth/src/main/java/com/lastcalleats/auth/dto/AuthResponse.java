@@ -16,7 +16,6 @@ public class AuthResponse {
     private String tokenType = "Bearer";
     private long expiresIn;
 
-    // 登录用户基本信息
     private Long userId;
     private String email;
     private String role;

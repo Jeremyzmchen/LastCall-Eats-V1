@@ -8,10 +8,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * 商品模板 —— 商家预先定义的菜品信息，可被多次复用发布为 Listing。
- * 商家在后台创建模板后，每天选择模板生成当天的限时商品（ProductListingDO）。
- */
 @Entity
 @Table(name = "product_template")
 @Getter
@@ -34,11 +30,10 @@ public class ProductTemplateDO {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // 原价（参考价，实际售价在 Listing 中设置折扣价）
+    // 原价，实际售价在 Listing 中单独设置
     @Column(name = "original_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal originalPrice;
 
-    // 模板是否仍然有效（软删除）
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 

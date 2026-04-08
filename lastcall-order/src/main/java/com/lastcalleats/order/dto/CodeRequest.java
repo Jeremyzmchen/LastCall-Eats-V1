@@ -4,9 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-/**
- * 商家核销取货码请求体。
- */
 @Data
 public class CodeRequest {
 
