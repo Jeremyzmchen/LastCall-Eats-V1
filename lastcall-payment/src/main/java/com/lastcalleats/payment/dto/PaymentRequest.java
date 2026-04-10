@@ -9,7 +9,7 @@ public class PaymentRequest {
     @NotNull
     private Long orderId;
 
-    // 由前端通过 Stripe.js 获取
+    // Stripe -> frontend -> backend
     @NotNull
     private String paymentMethodId;
 }
