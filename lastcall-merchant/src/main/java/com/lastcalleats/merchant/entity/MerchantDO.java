@@ -8,7 +8,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-// 注释掉的字段为 V2 预留，暂不开发
+/**
+ * 商家实体类，对应数据库中的 merchant 表。
+ * 存储商家的基本信息，包括店名、地址、营业时间、头图链接等。
+ */
 @Entity
 @Table(name = "merchant")
 @Getter
@@ -31,18 +34,19 @@ public class MerchantDO {
     @Column(nullable = false, length = 255)
     private String name;
 
-    //@Column(length = 20)
-    //private String phone;
+    @Column(length = 20)
+    private String phone;
 
-    //@Column(name = "cover_url", length = 500)
-    //private String coverUrl;
+    @Column(name = "cover_url", length = 500)
+    private String coverUrl;
 
-    //@Column(columnDefinition = "TEXT")
-    //private String description;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false, length = 500)
     private String address;
 
+    // V2 预留：地理位置（附近商家搜索）
     //@Column(precision = 10, scale = 7)
     //private BigDecimal latitude;
 
@@ -52,6 +56,7 @@ public class MerchantDO {
     @Column(name = "business_hours", length = 255)
     private String businessHours;
 
+    // V2 预留：评分系统（依赖评价模块）
     //@Column(nullable = false, precision = 2, scale = 1)
     //private BigDecimal rating = BigDecimal.ZERO;
 

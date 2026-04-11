@@ -7,7 +7,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-// 注释掉的字段为 V2 预留，暂不开发
+/**
+ * 用户实体类，对应数据库中的 user 表。
+ * 存储用户的基本信息，包括邮箱、昵称、头像链接等。
+ */
 @Entity
 @Table(name = "user")
 @Getter
@@ -30,9 +33,10 @@ public class UserDO {
     @Column(nullable = false, length = 100)
     private String nickname;
 
-    //@Column(name = "avatar_url", length = 500)
-    //private String avatarUrl;
+    @Column(name = "avatar_url", length = 500)
+    private String avatarUrl;
 
+    // V2 预留：第三方登录（Google / Facebook）
     //@Enumerated(EnumType.STRING)
     //@Column(name = "auth_provider", nullable = false, length = 20)
     //private AuthProvider authProvider = AuthProvider.LOCAL;
@@ -51,6 +55,7 @@ public class UserDO {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    // V2 预留
     //public enum AuthProvider {
     //    LOCAL, GOOGLE, FACEBOOK
     //}
