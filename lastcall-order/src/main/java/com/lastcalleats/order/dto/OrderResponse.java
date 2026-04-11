@@ -6,6 +6,9 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Response body for order APIs.
+ */
 @Getter
 @Builder
 public class OrderResponse {
@@ -17,8 +20,12 @@ public class OrderResponse {
     private BigDecimal price;
     private String status;
 
-    // 仅支付成功后返回
+    // Only returned after payment succeeds.
     private String pickupCode;
+
+    // Added in V1: the raw QR string for the frontend.
+    // The frontend should use a QR library to turn this string into a real QR image.
+    private String qrCodeContent;
 
     private LocalDateTime createdAt;
 }

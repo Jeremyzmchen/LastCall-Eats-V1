@@ -1,0 +1,6 @@
+com/lastcalleats/order/state/PaidStateTest.class
+com/lastcalleats/order/service/impl/OrderServiceImplTest.class
+com/lastcalleats/order/state/TerminalStateTest.class
+com/lastcalleats/order/factory/PickupCodeFactoryTest.class
+com/lastcalleats/order/service/impl/PickupCodeServiceImplTest.class
+com/lastcalleats/order/state/PendingPaymentStateTest.class
