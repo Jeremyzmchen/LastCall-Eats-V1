@@ -6,18 +6,18 @@ import com.lastcalleats.common.util.Assert;
 import com.lastcalleats.common.util.PickupCodeUtil;
 import com.lastcalleats.order.entity.OrderDO;
 import com.lastcalleats.order.entity.OrderDO.OrderStatus;
+import com.lastcalleats.order.entity.PickupCodeDO;
 import com.lastcalleats.order.repository.OrderRepo;
+import com.lastcalleats.order.repository.PickupCodeRepo;
 import com.lastcalleats.payment.dto.PaymentRequest;
 import com.lastcalleats.payment.dto.PaymentResponse;
 import com.lastcalleats.payment.dto.WebhookRequest;
 import com.lastcalleats.payment.service.PaymentService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentConfirmParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
   private final OrderRepo orderRepo;
+  private final PickupCodeRepo pickupCodeRepo;
 
   @Override
   @Transactional
@@ -34,22 +35,28 @@ public class PaymentServiceImpl implements PaymentService {
     OrderDO order = orderRepo.findById(request.getOrderId())
         .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     Assert.equals(order.getUserId(), userId, ErrorCode.BAD_REQUEST);
-    Assert.isTrue(order.getStatus() != OrderStatus.PENDING_PAYMENT, ErrorCode.ORDER_STATUS_INVALID);
+    Assert.isTrue(order.getStatus() == OrderStatus.PENDING_PAYMENT, ErrorCode.ORDER_STATUS_INVALID);
 
     // 创建Intent
     try {
-      // build API params
+      // build API params，confirm=true 直接在创建时确认支付
       PaymentIntentCreateParams createParams = PaymentIntentCreateParams.builder()
           // Stripe API 需要转化单位为分
           .setAmount(order.getPrice().multiply(java.math.BigDecimal.valueOf(100)).longValue())
           .setCurrency("usd")
           .setPaymentMethod(request.getPaymentMethodId())
+          .setConfirm(true)
+          .setAutomaticPaymentMethods(
+              PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
+                  .setEnabled(true)
+                  .setAllowRedirects(PaymentIntentCreateParams.AutomaticPaymentMethods.AllowRedirects.NEVER)
+                  .build()
+          )
           .putMetadata("userId", String.valueOf(userId))
           .putMetadata("orderId", String.valueOf(order.getId()))
           .build();
 
-      PaymentIntent intent = PaymentIntent.create(createParams)
-          .confirm(PaymentIntentConfirmParams.builder().build());
+      PaymentIntent intent = PaymentIntent.create(createParams);
       Assert.equals("succeeded", intent.getStatus(), ErrorCode.PAYMENT_FAILED);
 
       // 更新订单数据库信息
@@ -91,7 +98,13 @@ public class PaymentServiceImpl implements PaymentService {
 
   private void markOrderPaid(OrderDO order) {
     order.setStatus(OrderStatus.PAID);
-    order.setPickupCode(PickupCodeUtil.generateNumericCode());
     orderRepo.save(order);
+    if (pickupCodeRepo.findByOrderId(order.getId()).isEmpty()) {
+      pickupCodeRepo.save(PickupCodeDO.builder()
+          .orderId(order.getId())
+          .numericCode(PickupCodeUtil.generateNumericCode())
+          .used(false)
+          .build());
+    }
   }
 }
