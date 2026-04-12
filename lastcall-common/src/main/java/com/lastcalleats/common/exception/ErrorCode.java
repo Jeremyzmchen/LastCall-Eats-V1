@@ -45,7 +45,11 @@ public enum ErrorCode {
 
     // 评价
     REVIEW_ALREADY_EXISTS(400, "You have already reviewed this order"),
-    REVIEW_NOT_ALLOWED(400, "Order must be completed before reviewing");
+    REVIEW_NOT_ALLOWED(400, "Order must be completed before reviewing"),
+
+    // 帖子
+    POST_NOT_FOUND(404, "Post not found"),
+    POST_FORBIDDEN(403, "You are not allowed to delete this post");
 
     private final int httpStatus;
     private final String message;
