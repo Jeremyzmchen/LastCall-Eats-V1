@@ -1,0 +1,16 @@
+# Environment variables
+.env
+
+# Maven
+target/
+*.class
+
+# IntelliJ IDEA
+*.iml
+*.iws
+*.ipr
+out/
+
+# OS
+.DS_Store
+Thumbs.db
