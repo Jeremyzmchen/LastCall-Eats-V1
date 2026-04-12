@@ -34,14 +34,15 @@ public class MerchantDO {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(length = 20)
-    private String phone;
+    // V2 预留：商家电话、头图、简介
+    //@Column(length = 20)
+    //private String phone;
 
-    @Column(name = "cover_url", length = 500)
-    private String coverUrl;
+    //@Column(name = "cover_url", length = 500)
+    //private String coverUrl;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    //@Column(columnDefinition = "TEXT")
+    //private String description;
 
     @Column(nullable = false, length = 500)
     private String address;

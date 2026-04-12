@@ -23,6 +23,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.lastcalleats</groupId>
+            <artifactId>lastcall-merchant</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
