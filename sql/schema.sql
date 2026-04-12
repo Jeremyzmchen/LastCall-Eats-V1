@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     `email`         VARCHAR(255)    NOT NULL,
     `password_hash` VARCHAR(255)    NOT NULL,
     `nickname`      VARCHAR(100)    NOT NULL,
+    `avatar_url`    VARCHAR(500)    DEFAULT NULL,
     `is_active`     TINYINT(1)      NOT NULL DEFAULT 1,
     `created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -38,6 +39,22 @@ CREATE TABLE IF NOT EXISTS `merchant` (
     `updated_at`     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_merchant_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================
+-- 用户收藏表
+-- =====================
+CREATE TABLE IF NOT EXISTS `user_favorite` (
+    `id`          BIGINT    NOT NULL AUTO_INCREMENT,
+    `user_id`     BIGINT    NOT NULL,
+    `merchant_id` BIGINT    NOT NULL,
+    `created_at`  DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_favorite` (`user_id`, `merchant_id`),
+    KEY `idx_user_favorite_user` (`user_id`),
+    KEY `idx_user_favorite_merchant` (`merchant_id`),
+    CONSTRAINT `fk_user_favorite_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `fk_user_favorite_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================
