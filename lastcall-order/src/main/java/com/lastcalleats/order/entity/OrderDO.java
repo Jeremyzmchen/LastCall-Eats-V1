@@ -1,6 +1,13 @@
 package com.lastcalleats.order.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,6 +15,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Entity for the {@code orders} table.
+ */
 @Entity
 @Table(name = "orders")
 @Getter
@@ -30,28 +40,24 @@ public class OrderDO {
     @Column(name = "merchant_id", nullable = false)
     private Long merchantId;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2) // Up to 10 digits total, with 2 digits after the decimal point.
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private OrderStatus status;
 
-    // 支付成功后生成，6位数字
-    @Column(name = "pickup_code", length = 6)
-    private String pickupCode;
-
-    @Column(name = "pickup_code_used", nullable = false)
-    private Boolean pickupCodeUsed = false;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // Filled with the current time automatically.
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt; // Updated to the current time automatically.
 
+    /**
+     * Order status values.
+     */
     public enum OrderStatus {
         PENDING_PAYMENT,
         PAID,

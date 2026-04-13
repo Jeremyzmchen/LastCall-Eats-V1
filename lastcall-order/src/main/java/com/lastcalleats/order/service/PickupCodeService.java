@@ -1,6 +1,21 @@
 package com.lastcalleats.order.service;
 
-// V1 取货码逻辑由 OrderService 处理
-// V2 预留：过期失效、重新发送、批量核销等生命周期管理
+import com.lastcalleats.order.dto.CodeRequest;
+import com.lastcalleats.order.dto.CodeResponse;
+
+// In V1, OrderService handles pickup code creation.
+// In V2, this service can handle expiration, resend, and batch verification.
+/**
+ * Service interface for pickup code verification.
+ */
 public interface PickupCodeService {
+
+    /**
+     * Verifies a pickup code.
+     *
+     * @param merchantId current merchant ID
+     * @param request request with a pickup code or QR string
+     * @return verification result
+     */
+    CodeResponse verifyPickupCode(Long merchantId, CodeRequest request);
 }

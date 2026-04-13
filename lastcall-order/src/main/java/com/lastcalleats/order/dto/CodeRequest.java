@@ -1,13 +1,20 @@
 package com.lastcalleats.order.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Request body for pickup code verification.
+ */
 @Data
 public class CodeRequest {
 
-    @NotBlank
-    @Size(min = 6, max = 6, message = "Pickup code must be 6 digits")
+    /**
+     * Optional six-digit code for manual verification.
+     */
     private String pickupCode;
+
+    /**
+     * Optional QR string for scan verification.
+     */
+    private String qrCodeContent;
 }
