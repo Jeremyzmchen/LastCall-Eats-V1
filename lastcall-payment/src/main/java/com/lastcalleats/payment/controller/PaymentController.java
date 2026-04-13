@@ -35,12 +35,13 @@ public class PaymentController {
   @PostMapping("/create")
   public ApiResponse<PaymentResponse> createPaymentIntent(
       // TODO: auth 模块需要封装一层 LoginUser 替代 暴力获取 UserDetails
-      @AuthenticationPrincipal UserDetails loginUser,
+      @RequestHeader("X-User-Id") Long userId,
       @Valid @RequestBody PaymentRequest request
   ) {
     //Long userId = loginUser.getUserId();
-    Long userId = Long.parseLong(loginUser.getUsername());
-    return ApiResponse.success(paymentService.createPaymentIntent(userId, request));
+    //Long userId = Long.parseLong(loginUser.getUsername());
+    PaymentResponse response = paymentService.createPaymentIntent(userId, request);
+    return ResponseEntity.ok(ApiResponse.success(response));
   }
 
 

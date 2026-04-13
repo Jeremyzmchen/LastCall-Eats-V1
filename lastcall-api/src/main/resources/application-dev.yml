@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/lastcall_eats?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: your_password_here
+    password: ${DB_PASSWORD:123456}
 
   jpa:
     show-sql: true
@@ -20,7 +20,7 @@ app:
     bucket-name: lastcall-eats
 
   stripe:
-    secret-key: sk_test_your_stripe_test_key_here
+    secret-key: ${STRIPE_SECRET_KEY}
     webhook-secret: whsec_your_webhook_secret_here
 
   order:
