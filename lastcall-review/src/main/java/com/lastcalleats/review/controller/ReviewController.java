@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class ReviewController {
 
     @PostMapping
     public ApiResponse<ReviewResponse> createReview(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal Long userId,
             @Valid @RequestBody CreateReviewRequest request) {
         return ApiResponse.success(reviewService.createReview(userId, request));
     }

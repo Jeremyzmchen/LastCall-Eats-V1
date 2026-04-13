@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,7 +26,7 @@ public class PostController {
     // 发帖
     @PostMapping
     public ApiResponse<PostResponse> createPost(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal Long userId,
             @Valid @RequestBody CreatePostRequest request) {
         return ApiResponse.success(postService.createPost(userId, request));
     }
@@ -67,7 +68,7 @@ public class PostController {
     // 删帖
     @DeleteMapping("/{postId}")
     public ApiResponse<Void> deletePost(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long postId) {
         postService.deletePost(userId, postId);
         return ApiResponse.success();

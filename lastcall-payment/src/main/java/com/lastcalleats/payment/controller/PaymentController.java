@@ -17,10 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,12 +32,9 @@ public class PaymentController {
 
   @PostMapping("/create")
   public ApiResponse<PaymentResponse> createPaymentIntent(
-      // TODO: auth 模块需要封装一层 LoginUser 替代 暴力获取 UserDetails
-      @RequestHeader("X-User-Id") Long userId,
+      @AuthenticationPrincipal Long userId,
       @Valid @RequestBody PaymentRequest request
   ) {
-    //Long userId = loginUser.getUserId();
-    //Long userId = Long.parseLong(loginUser.getUsername());
     PaymentResponse response = paymentService.createPaymentIntent(userId, request);
     return ApiResponse.success(response);
   }
