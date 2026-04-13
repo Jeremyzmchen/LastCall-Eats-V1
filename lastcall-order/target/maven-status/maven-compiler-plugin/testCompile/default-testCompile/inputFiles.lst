@@ -1,6 +1,0 @@
-/Users/zhengxinhong/CS5004/FinalProject/LastCall-Eats/lastcall-order/src/test/java/com/lastcalleats/order/factory/PickupCodeFactoryTest.java
-/Users/zhengxinhong/CS5004/FinalProject/LastCall-Eats/lastcall-order/src/test/java/com/lastcalleats/order/service/impl/OrderServiceImplTest.java
-/Users/zhengxinhong/CS5004/FinalProject/LastCall-Eats/lastcall-order/src/test/java/com/lastcalleats/order/service/impl/PickupCodeServiceImplTest.java
-/Users/zhengxinhong/CS5004/FinalProject/LastCall-Eats/lastcall-order/src/test/java/com/lastcalleats/order/state/PaidStateTest.java
-/Users/zhengxinhong/CS5004/FinalProject/LastCall-Eats/lastcall-order/src/test/java/com/lastcalleats/order/state/PendingPaymentStateTest.java
-/Users/zhengxinhong/CS5004/FinalProject/LastCall-Eats/lastcall-order/src/test/java/com/lastcalleats/order/state/TerminalStateTest.java
