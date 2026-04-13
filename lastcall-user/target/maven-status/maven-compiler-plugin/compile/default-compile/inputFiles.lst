@@ -1,0 +1,12 @@
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/repository/UserRepo.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/dto/FavoriteMerchantResponse.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/entity/UserFavoriteDO.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/service/impl/FavoriteServiceImpl.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/dto/UserProfileRequest.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/controller/UserController.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/service/UserService.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/service/FavoriteService.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/repository/UserFavoriteRepo.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/entity/UserDO.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/dto/UserProfileResponse.java
+/Users/macv/Documents/Java_learning/final/LastCall-Eats-V1/lastcall-user/src/main/java/com/lastcalleats/user/service/impl/UserServiceImpl.java
