@@ -1,21 +1,12 @@
 package com.lastcalleats.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class AuthResponse {
-
     private String accessToken;
-    @Builder.Default
-    private String tokenType = "Bearer";
-    private long expiresIn;
-
+    private String tokenType;
+    private Long expiresIn;
     private Long userId;
     private String email;
     private String role;
