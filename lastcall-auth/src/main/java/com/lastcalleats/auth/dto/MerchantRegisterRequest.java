@@ -2,25 +2,21 @@ package com.lastcalleats.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class MerchantRegisterRequest {
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @NotBlank
-    @Size(min = 2, max = 100, message = "Business name must be between 2 and 100 characters")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = "Address cannot be blank")
     private String address;
 }
