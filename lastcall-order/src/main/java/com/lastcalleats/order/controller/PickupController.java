@@ -5,9 +5,9 @@ import com.lastcalleats.order.dto.CodeRequest;
 import com.lastcalleats.order.dto.CodeResponse;
 import com.lastcalleats.order.service.PickupCodeService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,13 +27,13 @@ public class PickupController {
     /**
      * Verifies a pickup code from a merchant.
      *
-     * @param merchantId current merchant identifier
-     * @param request pickup code verification payload
+     * @param merchantId current merchant
+     * @param codeRequest pickup code verification payload
      * @return verification result
      */
     @PutMapping("/verify")
-    public ApiResponse<CodeResponse> verifyPickupCode(@RequestHeader("X-Merchant-Id") Long merchantId,
-                                                      @Valid @RequestBody CodeRequest request) {
-        return ApiResponse.success(pickupCodeService.verifyPickupCode(merchantId, request));
+    public ApiResponse<CodeResponse> verifyPickupCode(@AuthenticationPrincipal Long merchantId,
+                                                      @Valid @RequestBody CodeRequest codeRequest) {
+        return ApiResponse.success(pickupCodeService.verifyPickupCode(merchantId, codeRequest));
     }
 }
