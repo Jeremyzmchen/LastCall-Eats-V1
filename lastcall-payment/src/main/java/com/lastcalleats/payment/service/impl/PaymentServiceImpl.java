@@ -19,13 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
   private final OrderRepo orderRepo;
   private final PickupCodeRepo pickupCodeRepo;
-  private final PaymentStrategy paymentStrategy;
+  private final List<PaymentStrategy> strategies;
 
   @Override
   @Transactional
@@ -35,7 +37,12 @@ public class PaymentServiceImpl implements PaymentService {
     Assert.equals(order.getUserId(), userId, ErrorCode.BAD_REQUEST);
     Assert.isTrue(order.getStatus() == OrderStatus.PENDING_PAYMENT, ErrorCode.ORDER_STATUS_INVALID);
 
-    PaymentResponse response = paymentStrategy.pay(order, request);
+    PaymentStrategy strategy = strategies.stream()
+        .filter(s -> s.supports(request.getPaymentType()))
+        .findFirst()
+        .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_METHOD_NOT_SUPPORTED));
+
+    PaymentResponse response = strategy.pay(order, request);
     markOrderPaid(order);
     return response;
   }

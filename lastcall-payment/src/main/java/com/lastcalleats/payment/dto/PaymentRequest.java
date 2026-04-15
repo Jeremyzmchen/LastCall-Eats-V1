@@ -12,4 +12,14 @@ public class PaymentRequest {
     // Stripe -> frontend -> backend
     @NotNull
     private String paymentMethodId;
+
+    /**
+     * 支付方式类型，用于 Strategy 路由。
+     * 目前支持：
+     *   - "STRIPE"    （已实现）
+     *   - "APPLE_PAY" （预留扩展）
+     *   - "PAYPAL"    （预留扩展）
+     */
+    @NotNull
+    private String paymentType;
 }

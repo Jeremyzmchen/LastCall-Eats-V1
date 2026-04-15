@@ -42,6 +42,7 @@ public enum ErrorCode {
 
     // 支付
     PAYMENT_FAILED(400, "Payment failed"),
+    PAYMENT_METHOD_NOT_SUPPORTED(400, "Payment method not supported"),
 
     // 评价
     REVIEW_ALREADY_EXISTS(400, "You have already reviewed this order"),

@@ -13,13 +13,15 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-/**
- * 基于 Stripe 的支付策略实现，封装 Stripe PaymentIntent 的创建和确认逻辑。
- * 所有 Stripe SDK 细节集中在此类，其他类不感知 Stripe 的存在。
- */
+/** Stripe 支付策略，所有 Stripe SDK 细节集中在此类。 */
 @Slf4j
 @Component
 public class StripePaymentStrategy implements PaymentStrategy {
+
+    @Override
+    public boolean supports(String paymentType) {
+        return "STRIPE".equalsIgnoreCase(paymentType);
+    }
 
     @Override
     public PaymentResponse pay(OrderDO order, PaymentRequest request) {
