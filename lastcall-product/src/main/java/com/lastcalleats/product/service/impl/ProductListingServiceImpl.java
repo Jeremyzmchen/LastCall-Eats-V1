@@ -1,7 +1,10 @@
 package com.lastcalleats.product.service.impl;
 
+import com.lastcalleats.merchant.entity.MerchantDO;
+import com.lastcalleats.merchant.repository.MerchantRepo;
 import com.lastcalleats.product.dto.ListingRequest;
 import com.lastcalleats.product.dto.ListingResponse;
+import com.lastcalleats.product.dto.UserBrowseResponse;
 import com.lastcalleats.product.entity.ProductListingDO;
 import com.lastcalleats.product.entity.ProductTemplateDO;
 import com.lastcalleats.product.repository.ProductListingRepo;
@@ -36,15 +39,24 @@ public class ProductListingServiceImpl implements ProductListingService {
   private final ProductTemplateRepo productTemplateRepo;
 
   /**
+   * Repository for merchant database operations.
+   * Used to enrich browse results with merchant name and address.
+   */
+  private final MerchantRepo merchantRepo;
+
+  /**
    * Constructs the listing service with required repositories.
    *
    * @param productListingRepo repository for listing data
    * @param productTemplateRepo repository for template data
+   * @param merchantRepo repository for merchant data
    */
   public ProductListingServiceImpl(ProductListingRepo productListingRepo,
-      ProductTemplateRepo productTemplateRepo) {
+      ProductTemplateRepo productTemplateRepo,
+      MerchantRepo merchantRepo) {
     this.productListingRepo = productListingRepo;
     this.productTemplateRepo = productTemplateRepo;
+    this.merchantRepo = merchantRepo;
   }
 
   /**
@@ -126,13 +138,14 @@ public class ProductListingServiceImpl implements ProductListingService {
    *
    * <p>This method is used by the user-facing browse page. It loads all listings
    * from the database, keeps only listings that are still available and have
-   * remaining stock, and then converts them into response DTOs.</p>
+   * remaining stock, and then converts them into UserBrowseResponse DTOs
+   * which include merchant name and address.</p>
    *
-   * @return a list of available listing responses
+   * @return a list of available listing responses with merchant info
    */
   @Override
   @Transactional(readOnly = true)
-  public List<ListingResponse> browseAvailableListings() {
+  public List<UserBrowseResponse> browseAvailableListings() {
     // Load all listing records from the database
     List<ProductListingDO> listings = productListingRepo.findAll();
 
@@ -141,8 +154,8 @@ public class ProductListingServiceImpl implements ProductListingService {
         .filter(listing -> Boolean.TRUE.equals(listing.getIsAvailable()))
         // Keep only listings that still have stock left
         .filter(listing -> listing.getRemainingQuantity() > 0)
-        // Convert each listing entity into a response DTO
-        .map(this::toResponseWithTemplateLookup)
+        // Convert each listing entity into a UserBrowseResponse DTO
+        .map(this::toBrowseResponse)
         // Collect all converted results into a list
         .collect(Collectors.toList());
   }
@@ -223,5 +236,38 @@ public class ProductListingServiceImpl implements ProductListingService {
         .orElseThrow(() -> new RuntimeException("Template not found for listing."));
 
     return toResponse(listing, template);
+  }
+
+  /**
+   * Convert a listing entity into a UserBrowseResponse DTO.
+   *
+   * <p>This is used for the public browse endpoint. It enriches the listing
+   * with merchant name and address by loading the merchant entity.</p>
+   *
+   * @param listing listing entity
+   * @return user browse response DTO with merchant info
+   */
+  private UserBrowseResponse toBrowseResponse(ProductListingDO listing) {
+    // Load template to get product name and original price
+    ProductTemplateDO template = productTemplateRepo.findById(listing.getTemplateId())
+        .orElseThrow(() -> new RuntimeException("Template not found for listing."));
+
+    // Load merchant to get name and address
+    MerchantDO merchant = merchantRepo.findById(listing.getMerchantId())
+        .orElseThrow(() -> new RuntimeException("Merchant not found for listing."));
+
+    return UserBrowseResponse.builder()
+        .listingId(listing.getId())
+        .merchantId(listing.getMerchantId())
+        .merchantName(merchant.getName())
+        .merchantAddress(merchant.getAddress())
+        .productName(template.getName())
+        .description(template.getDescription())
+        .originalPrice(template.getOriginalPrice())
+        .discountPrice(listing.getDiscountPrice())
+        .remainingQuantity(listing.getRemainingQuantity())
+        .pickupStart(listing.getPickupStart())
+        .pickupEnd(listing.getPickupEnd())
+        .build();
   }
 }

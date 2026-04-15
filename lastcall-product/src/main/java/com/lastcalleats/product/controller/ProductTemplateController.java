@@ -5,6 +5,7 @@ import com.lastcalleats.product.dto.TemplateRequest;
 import com.lastcalleats.product.dto.TemplateResponse;
 import com.lastcalleats.product.service.ProductTemplateService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,80 +23,37 @@ import java.util.List;
 @RequestMapping("/api/merchant/templates")
 public class ProductTemplateController {
 
-  /**
-   * Service layer for product template business logic.
-   */
   private final ProductTemplateService productTemplateService;
 
-  /**
-   * Constructor injection.
-   *
-   * @param productTemplateService template service
-   */
   public ProductTemplateController(ProductTemplateService productTemplateService) {
     this.productTemplateService = productTemplateService;
   }
 
-  /**
-   * Create a new template.
-   *
-   * For now, merchantId is temporarily hardcoded to 1L.
-   * Later, this should come from Spring Security.
-   *
-   * @param request template request body
-   * @return created template response
-   */
   @PostMapping
-  public ApiResponse<TemplateResponse> createTemplate(@Valid @RequestBody TemplateRequest request) {
-    Long merchantId = 1L;
-    TemplateResponse response = productTemplateService.createTemplate(merchantId, request);
-    return ApiResponse.success(response);
+  public ApiResponse<TemplateResponse> createTemplate(
+      @AuthenticationPrincipal Long merchantId,
+      @Valid @RequestBody TemplateRequest request) {
+    return ApiResponse.success(productTemplateService.createTemplate(merchantId, request));
   }
 
-  /**
-   * Get all templates for the current merchant.
-   *
-   * For now, merchantId is temporarily hardcoded to 1L.
-   *
-   * @return list of template responses
-   */
   @GetMapping
-  public ApiResponse<List<TemplateResponse>> getTemplates() {
-    Long merchantId = 1L;
-    List<TemplateResponse> responses = productTemplateService.getTemplates(merchantId);
-    return ApiResponse.success(responses);
+  public ApiResponse<List<TemplateResponse>> getTemplates(
+      @AuthenticationPrincipal Long merchantId) {
+    return ApiResponse.success(productTemplateService.getTemplates(merchantId));
   }
 
-  /**
-   * Update a template by id.
-   *
-   * For now, merchantId is temporarily hardcoded to 1L.
-   *
-   * @param templateId template id from path
-   * @param request updated template request body
-   * @return updated template response
-   */
   @PutMapping("/{id}")
   public ApiResponse<TemplateResponse> updateTemplate(
+      @AuthenticationPrincipal Long merchantId,
       @PathVariable("id") Long templateId,
       @Valid @RequestBody TemplateRequest request) {
-
-    Long merchantId = 1L;
-    TemplateResponse response = productTemplateService.updateTemplate(merchantId, templateId, request);
-    return ApiResponse.success(response);
+    return ApiResponse.success(productTemplateService.updateTemplate(merchantId, templateId, request));
   }
 
-  /**
-   * Soft delete a template by id.
-   *
-   * For now, merchantId is temporarily hardcoded to 1L.
-   *
-   * @param templateId template id from path
-   * @return success response with no data
-   */
   @DeleteMapping("/{id}")
-  public ApiResponse<Void> deleteTemplate(@PathVariable("id") Long templateId) {
-    Long merchantId = 1L;
+  public ApiResponse<Void> deleteTemplate(
+      @AuthenticationPrincipal Long merchantId,
+      @PathVariable("id") Long templateId) {
     productTemplateService.deleteTemplate(merchantId, templateId);
     return ApiResponse.success();
   }
