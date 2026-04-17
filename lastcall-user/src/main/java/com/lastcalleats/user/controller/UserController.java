@@ -1,7 +1,7 @@
 package com.lastcalleats.user.controller;
 
 import com.lastcalleats.common.response.ApiResponse;
-import com.lastcalleats.user.dto.FavoriteMerchantResponse;
+import com.lastcalleats.user.dto.FavoriteListingResponse;
 import com.lastcalleats.user.dto.UserProfileRequest;
 import com.lastcalleats.user.dto.UserProfileResponse;
 import com.lastcalleats.user.service.FavoriteService;
@@ -47,29 +47,29 @@ public class UserController {
     }
 
     @GetMapping("/favorites")
-    public ApiResponse<List<FavoriteMerchantResponse>> listFavorites() {
+    public ApiResponse<List<FavoriteListingResponse>> listFavorites() {
         Long userId = getCurrentUserId();
         return ApiResponse.success(favoriteService.listFavorites(userId));
     }
 
-    @PostMapping("/favorites/{merchantId}")
-    public ApiResponse<Void> addFavorite(@PathVariable Long merchantId) {
+    @PostMapping("/favorites/{listingId}")
+    public ApiResponse<Void> addFavorite(@PathVariable Long listingId) {
         Long userId = getCurrentUserId();
-        favoriteService.addFavorite(userId, merchantId);
+        favoriteService.addFavorite(userId, listingId);
         return ApiResponse.success();
     }
 
-    @DeleteMapping("/favorites/{merchantId}")
-    public ApiResponse<Void> removeFavorite(@PathVariable Long merchantId) {
+    @DeleteMapping("/favorites/{listingId}")
+    public ApiResponse<Void> removeFavorite(@PathVariable Long listingId) {
         Long userId = getCurrentUserId();
-        favoriteService.removeFavorite(userId, merchantId);
+        favoriteService.removeFavorite(userId, listingId);
         return ApiResponse.success();
     }
 
-    @GetMapping("/favorites/{merchantId}")
-    public ApiResponse<Boolean> isFavorite(@PathVariable Long merchantId) {
+    @GetMapping("/favorites/{listingId}")
+    public ApiResponse<Boolean> isFavorite(@PathVariable Long listingId) {
         Long userId = getCurrentUserId();
-        return ApiResponse.success(favoriteService.isFavorite(userId, merchantId));
+        return ApiResponse.success(favoriteService.isFavorite(userId, listingId));
     }
 
     /**

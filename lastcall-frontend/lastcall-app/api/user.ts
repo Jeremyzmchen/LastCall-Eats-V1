@@ -7,10 +7,19 @@ export interface UserProfileResponse {
   avatarUrl: string;
 }
 
-export interface FavoriteMerchantResponse {
+export interface FavoriteListingResponse {
+  listingId: number;
   merchantId: number;
   merchantName: string;
-  merchantAddress: string;
+  productName: string;
+  description: string;
+  originalPrice: number;
+  discountPrice: number;
+  remainingQuantity: number;
+  pickupStart: string;
+  pickupEnd: string;
+  date: string;
+  isAvailable: boolean;
   favoritedAt: string;
 }
 
@@ -21,13 +30,13 @@ export const updateUserProfile = (nickname: string) =>
   apiClient.put<{ code: number; data: UserProfileResponse }>('/api/user/profile', { nickname });
 
 export const getFavorites = () =>
-  apiClient.get<{ code: number; data: FavoriteMerchantResponse[] }>('/api/user/favorites');
+  apiClient.get<{ code: number; data: FavoriteListingResponse[] }>('/api/user/favorites');
 
-export const addFavorite = (merchantId: number) =>
-  apiClient.post(`/api/user/favorites/${merchantId}`);
+export const addFavorite = (listingId: number) =>
+  apiClient.post(`/api/user/favorites/${listingId}`);
 
-export const removeFavorite = (merchantId: number) =>
-  apiClient.delete(`/api/user/favorites/${merchantId}`);
+export const removeFavorite = (listingId: number) =>
+  apiClient.delete(`/api/user/favorites/${listingId}`);
 
-export const checkFavorite = (merchantId: number) =>
-  apiClient.get<{ code: number; data: boolean }>(`/api/user/favorites/${merchantId}`);
+export const checkFavorite = (listingId: number) =>
+  apiClient.get<{ code: number; data: boolean }>(`/api/user/favorites/${listingId}`);

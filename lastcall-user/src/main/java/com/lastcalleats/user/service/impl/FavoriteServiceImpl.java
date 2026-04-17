@@ -4,7 +4,11 @@ import com.lastcalleats.common.exception.BusinessException;
 import com.lastcalleats.common.exception.ErrorCode;
 import com.lastcalleats.merchant.entity.MerchantDO;
 import com.lastcalleats.merchant.repository.MerchantRepo;
-import com.lastcalleats.user.dto.FavoriteMerchantResponse;
+import com.lastcalleats.product.entity.ProductListingDO;
+import com.lastcalleats.product.entity.ProductTemplateDO;
+import com.lastcalleats.product.repository.ProductListingRepo;
+import com.lastcalleats.product.repository.ProductTemplateRepo;
+import com.lastcalleats.user.dto.FavoriteListingResponse;
 import com.lastcalleats.user.entity.UserFavoriteDO;
 import com.lastcalleats.user.repository.UserFavoriteRepo;
 import com.lastcalleats.user.service.FavoriteService;
@@ -16,67 +20,73 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 收藏服务实现类，处理用户收藏商家的业务逻辑。
- * 依赖 UserFavoriteRepo 操作收藏表，依赖 MerchantRepo 查询商家信息。
+ * 收藏服务实现类，处理用户收藏 listing 的业务逻辑。
  */
 @Service
 @RequiredArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final UserFavoriteRepo userFavoriteRepo;
+    private final ProductListingRepo productListingRepo;
+    private final ProductTemplateRepo productTemplateRepo;
     private final MerchantRepo merchantRepo;
 
     @Override
-    public void addFavorite(Long userId, Long merchantId) {
-        // 检查商家是否存在
-        merchantRepo.findById(merchantId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MERCHANT_NOT_FOUND));
+    public void addFavorite(Long userId, Long listingId) {
+        productListingRepo.findById(listingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Listing not found"));
 
-        // 检查是否已经收藏
-        if (userFavoriteRepo.existsByUserIdAndMerchantId(userId, merchantId)) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "已经收藏过该商家");
+        if (userFavoriteRepo.existsByUserIdAndListingId(userId, listingId)) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "Already favourited");
         }
 
-        UserFavoriteDO favorite = UserFavoriteDO.builder()
+        userFavoriteRepo.save(UserFavoriteDO.builder()
                 .userId(userId)
-                .merchantId(merchantId)
-                .build();
-        userFavoriteRepo.save(favorite);
+                .listingId(listingId)
+                .build());
     }
 
     @Override
     @Transactional
-    public void removeFavorite(Long userId, Long merchantId) {
-        if (!userFavoriteRepo.existsByUserIdAndMerchantId(userId, merchantId)) {
-            throw new BusinessException(ErrorCode.NOT_FOUND, "未收藏该商家");
+    public void removeFavorite(Long userId, Long listingId) {
+        if (!userFavoriteRepo.existsByUserIdAndListingId(userId, listingId)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "Favourite not found");
         }
-        userFavoriteRepo.deleteByUserIdAndMerchantId(userId, merchantId);
+        userFavoriteRepo.deleteByUserIdAndListingId(userId, listingId);
     }
 
     @Override
-    public List<FavoriteMerchantResponse> listFavorites(Long userId) {
-        List<UserFavoriteDO> favorites = userFavoriteRepo.findByUserId(userId);
-
-        return favorites.stream()
+    public List<FavoriteListingResponse> listFavorites(Long userId) {
+        return userFavoriteRepo.findByUserId(userId).stream()
                 .map(fav -> {
-                    MerchantDO merchant = merchantRepo.findById(fav.getMerchantId())
-                            .orElse(null);
-                    if (merchant == null) {
-                        return null;
-                    }
-                    return FavoriteMerchantResponse.builder()
+                    ProductListingDO listing = productListingRepo.findById(fav.getListingId()).orElse(null);
+                    if (listing == null) return null;
+                    ProductTemplateDO template = productTemplateRepo.findById(listing.getTemplateId()).orElse(null);
+                    if (template == null) return null;
+                    MerchantDO merchant = merchantRepo.findById(listing.getMerchantId()).orElse(null);
+                    if (merchant == null) return null;
+                    return FavoriteListingResponse.builder()
+                            .listingId(listing.getId())
                             .merchantId(merchant.getId())
                             .merchantName(merchant.getName())
-                            .merchantAddress(merchant.getAddress())
+                            .productName(template.getName())
+                            .description(template.getDescription())
+                            .originalPrice(template.getOriginalPrice())
+                            .discountPrice(listing.getDiscountPrice())
+                            .remainingQuantity(listing.getRemainingQuantity())
+                            .pickupStart(listing.getPickupStart())
+                            .pickupEnd(listing.getPickupEnd())
+                            .date(listing.getDate())
+                            .isAvailable(listing.getIsAvailable())
                             .favoritedAt(fav.getCreatedAt())
                             .build();
                 })
-                .filter(resp -> resp != null)
+                .filter(r -> r != null)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public boolean isFavorite(Long userId, Long merchantId) {
-        return userFavoriteRepo.existsByUserIdAndMerchantId(userId, merchantId);
+    public boolean isFavorite(Long userId, Long listingId) {
+        return userFavoriteRepo.existsByUserIdAndListingId(userId, listingId);
     }
 }

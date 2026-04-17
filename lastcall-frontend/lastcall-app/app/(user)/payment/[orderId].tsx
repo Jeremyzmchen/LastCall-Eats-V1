@@ -18,7 +18,7 @@ export default function PaymentScreen() {
     }
     setLoading(true);
     try {
-      await createPaymentIntent({ orderId: Number(orderId), paymentMethodId: paymentMethodId.trim() });
+      await createPaymentIntent({ orderId: Number(orderId), paymentMethodId: paymentMethodId.trim(), paymentType: 'STRIPE' });
       router.replace({ pathname: '/(user)/pickup/[orderId]', params: { orderId: String(orderId) } });
     } catch (e: any) {
       Alert.alert('Payment failed', e.response?.data?.message || 'Please try again');

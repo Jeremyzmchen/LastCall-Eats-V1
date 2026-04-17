@@ -6,6 +6,7 @@ import {
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { browseListings, UserBrowseResponse } from '../../api/product';
+import { addFavorite, removeFavorite, checkFavorite } from '../../api/user';
 import { Colors } from '../../constants/colors';
 import LoadingCenter from '../../components/LoadingCenter';
 import EmptyState from '../../components/EmptyState';
@@ -17,11 +18,16 @@ export default function DiscoverScreen() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+
   const load = async () => {
     try {
       const res = await browseListings();
-      setListings(res.data.data);
-      setFiltered(res.data.data);
+      const data = res.data.data;
+      setListings(data);
+      setFiltered(data);
+      const checks = await Promise.all(data.map(l => checkFavorite(l.listingId).then(r => r.data.data ? l.listingId : null).catch(() => null)));
+      setFavorites(new Set(checks.filter((id): id is number => id !== null)));
     } catch {
       // silent
     } finally {
@@ -43,8 +49,27 @@ export default function DiscoverScreen() {
     }
   }, [search, listings]);
 
+  const handleToggleFavorite = async (listingId: number) => {
+    const isFav = favorites.has(listingId);
+    setFavorites(prev => {
+      const next = new Set(prev);
+      isFav ? next.delete(listingId) : next.add(listingId);
+      return next;
+    });
+    try {
+      isFav ? await removeFavorite(listingId) : await addFavorite(listingId);
+    } catch {
+      setFavorites(prev => {
+        const next = new Set(prev);
+        isFav ? next.add(listingId) : next.delete(listingId);
+        return next;
+      });
+    }
+  };
+
   const renderItem = ({ item }: { item: UserBrowseResponse }) => {
     const soldOut = item.remainingQuantity <= 0;
+    const isFav = favorites.has(item.listingId);
 
     return (
       <TouchableOpacity
@@ -71,6 +96,15 @@ export default function DiscoverScreen() {
               <Text style={styles.qtyText}>{item.remainingQuantity} left</Text>
             </View>
           )}
+
+          {/* Favourite button */}
+          <TouchableOpacity
+            onPress={(e) => { e.stopPropagation(); handleToggleFavorite(item.listingId); }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.heartBtn}
+          >
+            <Ionicons name={isFav ? 'heart' : 'heart-outline'} size={22} color={isFav ? '#E05A5A' : '#fff'} />
+          </TouchableOpacity>
         </View>
 
         {/* Card content */}
@@ -220,6 +254,7 @@ const styles = StyleSheet.create({
   description: { fontSize: 13, color: Colors.textSecondary, marginBottom: 4, lineHeight: 18 },
 
   bottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
+  heartBtn: { position: 'absolute', top: 12, right: 12, backgroundColor: 'rgba(0,0,0,0.25)', borderRadius: 20, padding: 6 },
   pickupTime: { fontSize: 12, color: Colors.textSecondary, flex: 1 },
   priceCol: { alignItems: 'flex-end' },
   originalPrice: { fontSize: 12, color: Colors.textMuted, textDecorationLine: 'line-through' },

@@ -76,6 +76,7 @@ public class PaymentServiceImpl implements PaymentService {
       pickupCodeRepo.save(PickupCodeDO.builder()
           .orderId(order.getId())
           .numericCode(PickupCodeUtil.generateNumericCode())
+          .qrCode("ORDER:" + order.getId())
           .used(false)
           .build());
     }

@@ -2,13 +2,13 @@ import { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getFavorites, removeFavorite, FavoriteMerchantResponse } from '../../api/user';
+import { getFavorites, removeFavorite, FavoriteListingResponse } from '../../api/user';
 import { Colors } from '../../constants/colors';
 import LoadingCenter from '../../components/LoadingCenter';
 import EmptyState from '../../components/EmptyState';
 
 export default function FavoritesScreen() {
-  const [favorites, setFavorites] = useState<FavoriteMerchantResponse[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteListingResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -26,9 +26,9 @@ export default function FavoritesScreen() {
 
   useFocusEffect(useCallback(() => { load(); }, []));
 
-  const handleUnfavorite = async (merchantId: number) => {
-    await removeFavorite(merchantId);
-    setFavorites(f => f.filter(x => x.merchantId !== merchantId));
+  const handleUnfavorite = async (listingId: number) => {
+    await removeFavorite(listingId);
+    setFavorites(f => f.filter(x => x.listingId !== listingId));
   };
 
   if (loading) return <LoadingCenter />;
@@ -38,7 +38,7 @@ export default function FavoritesScreen() {
       <Text style={styles.title}>Favourites</Text>
       <FlatList
         data={favorites}
-        keyExtractor={(item) => String(item.merchantId)}
+        keyExtractor={(item) => String(item.listingId)}
         contentContainerStyle={styles.list}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={Colors.primary} />}
         renderItem={({ item }) => (
@@ -47,13 +47,15 @@ export default function FavoritesScreen() {
               <Text style={styles.iconText}>{item.merchantName[0]?.toUpperCase()}</Text>
             </View>
             <View style={styles.info}>
-              <Text style={styles.name}>{item.merchantName}</Text>
-              <View style={styles.addressRow}>
-                <Ionicons name="location-outline" size={12} color={Colors.textSecondary} />
-                <Text style={styles.address}> {item.merchantAddress}</Text>
+              <Text style={styles.productName}>{item.productName}</Text>
+              <Text style={styles.merchantName}>{item.merchantName}</Text>
+              <View style={styles.row}>
+                <Text style={styles.price}>US${Number(item.discountPrice).toFixed(2)}</Text>
+                <Text style={styles.dot}>·</Text>
+                <Text style={styles.pickup}>{item.pickupStart} – {item.pickupEnd}</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={() => handleUnfavorite(item.merchantId)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <TouchableOpacity onPress={() => handleUnfavorite(item.listingId)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Ionicons name="heart" size={22} color="#E05A5A" />
             </TouchableOpacity>
           </View>
@@ -81,7 +83,10 @@ const styles = StyleSheet.create({
   },
   iconText: { fontSize: 20, fontWeight: '700', color: Colors.primary },
   info: { flex: 1 },
-  name: { fontSize: 15, fontWeight: '600', color: Colors.text, marginBottom: 4 },
-  addressRow: { flexDirection: 'row', alignItems: 'center' },
-  address: { fontSize: 12, color: Colors.textSecondary },
+  productName: { fontSize: 15, fontWeight: '600', color: Colors.text, marginBottom: 2 },
+  merchantName: { fontSize: 12, color: Colors.textSecondary, marginBottom: 4 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  price: { fontSize: 13, fontWeight: '700', color: Colors.primary },
+  dot: { fontSize: 13, color: Colors.textMuted },
+  pickup: { fontSize: 12, color: Colors.textSecondary },
 });

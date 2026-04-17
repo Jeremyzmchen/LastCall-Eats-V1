@@ -16,9 +16,9 @@ public interface UserFavoriteRepo extends JpaRepository<UserFavoriteDO, Long> {
 
     List<UserFavoriteDO> findByUserId(Long userId);
 
-    Optional<UserFavoriteDO> findByUserIdAndMerchantId(Long userId, Long merchantId);
+    Optional<UserFavoriteDO> findByUserIdAndListingId(Long userId, Long listingId);
 
-    boolean existsByUserIdAndMerchantId(Long userId, Long merchantId);
+    boolean existsByUserIdAndListingId(Long userId, Long listingId);
 
-    void deleteByUserIdAndMerchantId(Long userId, Long merchantId);
+    void deleteByUserIdAndListingId(Long userId, Long listingId);
 }

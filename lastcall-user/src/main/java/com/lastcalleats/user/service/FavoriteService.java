@@ -1,6 +1,6 @@
 package com.lastcalleats.user.service;
 
-import com.lastcalleats.user.dto.FavoriteMerchantResponse;
+import com.lastcalleats.user.dto.FavoriteListingResponse;
 
 import java.util.List;
 
@@ -10,11 +10,11 @@ import java.util.List;
  */
 public interface FavoriteService {
 
-    void addFavorite(Long userId, Long merchantId);
+    void addFavorite(Long userId, Long listingId);
 
-    void removeFavorite(Long userId, Long merchantId);
+    void removeFavorite(Long userId, Long listingId);
 
-    List<FavoriteMerchantResponse> listFavorites(Long userId);
+    List<FavoriteListingResponse> listFavorites(Long userId);
 
-    boolean isFavorite(Long userId, Long merchantId);
+    boolean isFavorite(Long userId, Long listingId);
 }

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createOrder } from '../../../api/order';
 import { UserBrowseResponse } from '../../../api/product';
+import { addFavorite, removeFavorite, checkFavorite } from '../../../api/user';
 import { Colors } from '../../../constants/colors';
 
 export default function ListingDetailScreen() {
@@ -11,6 +12,31 @@ export default function ListingDetailScreen() {
   const params = useLocalSearchParams();
   const item: UserBrowseResponse = JSON.parse(params.data as string);
   const [loading, setLoading] = useState(false);
+  const [favorited, setFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+
+  useEffect(() => {
+    checkFavorite(item.listingId)
+      .then(res => setFavorited(res.data.data))
+      .catch(() => {});
+  }, []);
+
+  const handleToggleFavorite = async () => {
+    setFavLoading(true);
+    try {
+      if (favorited) {
+        await removeFavorite(item.listingId);
+        setFavorited(false);
+      } else {
+        await addFavorite(item.listingId);
+        setFavorited(true);
+      }
+    } catch {
+      Alert.alert('Error', 'Failed to update favourite');
+    } finally {
+      setFavLoading(false);
+    }
+  };
 
   const handleOrder = async () => {
     setLoading(true);
@@ -27,9 +53,14 @@ export default function ListingDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.back} onPress={() => router.back()}>
-        <Ionicons name="arrow-back" size={24} color={Colors.text} />
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color={Colors.text} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleToggleFavorite} disabled={favLoading} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Ionicons name={favorited ? 'heart' : 'heart-outline'} size={26} color={favorited ? '#E05A5A' : Colors.textSecondary} />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.productName}>{item.productName}</Text>
@@ -77,7 +108,7 @@ const rowStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  back: { paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 60, paddingBottom: 12 },
   content: { paddingHorizontal: 20, paddingBottom: 120 },
   productName: { fontSize: 24, fontWeight: '700', color: Colors.text, marginBottom: 4 },
   merchantName: { fontSize: 15, color: Colors.primary, marginBottom: 2 },

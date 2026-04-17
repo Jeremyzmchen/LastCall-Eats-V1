@@ -3,6 +3,7 @@ import { apiClient } from './client';
 export interface PaymentRequest {
   orderId: number;
   paymentMethodId: string;
+  paymentType: string;
 }
 
 export interface PaymentResponse {
