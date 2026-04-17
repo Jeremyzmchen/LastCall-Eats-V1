@@ -21,7 +21,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     await SecureStore.setItemAsync('access_token', token);
     await SecureStore.setItemAsync('user_id', String(userId));
     await SecureStore.setItemAsync('role', role);
-    set({ token, userId, role: role as AuthState['role'] });
+    set({ token, userId, role: role as AuthState['role'], isLoaded: true });
   },
 
   clearAuth: async () => {
