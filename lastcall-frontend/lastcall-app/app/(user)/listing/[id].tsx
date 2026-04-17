@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createOrder } from '../../../api/order';
 import { UserBrowseResponse } from '../../../api/product';
+import { getReviewsByTemplate, ReviewResponse } from '../../../api/review';
 import { addFavorite, removeFavorite, checkFavorite } from '../../../api/user';
 import { Colors } from '../../../constants/colors';
 
@@ -14,10 +15,14 @@ export default function ListingDetailScreen() {
   const [loading, setLoading] = useState(false);
   const [favorited, setFavorited] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+  const [reviews, setReviews] = useState<ReviewResponse[]>([]);
 
   useEffect(() => {
     checkFavorite(item.listingId)
       .then(res => setFavorited(res.data.data))
+      .catch(() => {});
+    getReviewsByTemplate(item.templateId)
+      .then(res => setReviews(res.data.data.content))
       .catch(() => {});
   }, []);
 
@@ -74,6 +79,25 @@ export default function ListingDetailScreen() {
           <Row label="Remaining" value={`${item.remainingQuantity} left`} />
           <Row label="Pickup Time" value={`${item.pickupStart} – ${item.pickupEnd}`} />
         </View>
+
+        {reviews.length > 0 && (
+          <View style={styles.reviewSection}>
+            <Text style={styles.reviewTitle}>Reviews ({reviews.length})</Text>
+            {reviews.map(r => (
+              <View key={r.id} style={styles.reviewCard}>
+                <View style={styles.reviewHeader}>
+                  <View style={styles.stars}>
+                    {[1,2,3,4,5].map(n => (
+                      <Ionicons key={n} name={n <= r.rating ? 'star' : 'star-outline'} size={13} color={Colors.secondary} />
+                    ))}
+                  </View>
+                  <Text style={styles.reviewDate}>{new Date(r.createdAt).toLocaleDateString()}</Text>
+                </View>
+                {r.content ? <Text style={styles.reviewContent}>{r.content}</Text> : null}
+              </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -131,4 +155,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 36, paddingVertical: 14,
   },
   reserveText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  reviewSection: { marginTop: 24 },
+  reviewTitle: { fontSize: 16, fontWeight: '700', color: Colors.text, marginBottom: 12 },
+  reviewCard: {
+    backgroundColor: Colors.card, borderRadius: 12, padding: 14, marginBottom: 10,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 3, elevation: 1,
+  },
+  reviewHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  stars: { flexDirection: 'row', gap: 2 },
+  reviewDate: { fontSize: 12, color: Colors.textMuted },
+  reviewContent: { fontSize: 14, color: Colors.textSecondary, lineHeight: 20 },
 });

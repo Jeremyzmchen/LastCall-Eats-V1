@@ -258,6 +258,7 @@ public class ProductListingServiceImpl implements ProductListingService {
 
     return UserBrowseResponse.builder()
         .listingId(listing.getId())
+        .templateId(listing.getTemplateId())
         .merchantId(listing.getMerchantId())
         .merchantName(merchant.getName())
         .merchantAddress(merchant.getAddress())

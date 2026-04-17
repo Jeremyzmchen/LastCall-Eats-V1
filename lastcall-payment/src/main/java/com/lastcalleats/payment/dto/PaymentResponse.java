@@ -11,7 +11,7 @@ public class PaymentResponse {
     private String status;
     private String paymentIntentId;
 
-    // 为 true 时前端需额外处理（如 3D Secure 验证）
+    // True when the client must handle an extra step (e.g. 3D Secure)
     private Boolean requiresAction;
     private String clientSecret;
 }

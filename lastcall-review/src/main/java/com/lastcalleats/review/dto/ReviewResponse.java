@@ -6,10 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 评价响应 DTO，返回给前端展示评价详情。
- * 不暴露 isVisible 等内部管理字段。
- */
+/** Excludes internal fields such as isVisible. */
 @Getter
 @Builder
 public class ReviewResponse {

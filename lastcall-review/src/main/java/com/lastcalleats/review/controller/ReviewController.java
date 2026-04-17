@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-/**
- * 评价控制器，处理评价模块的 HTTP 请求。
- * 提供提交评价、按订单查询、按商家查询、按商品模板查询接口。
- */
 @RestController
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor

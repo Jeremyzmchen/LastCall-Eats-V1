@@ -16,9 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 包括发帖、查询和删帖，权限校验在删帖时执行。
- */
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -71,9 +68,7 @@ public class PostServiceImpl implements PostService {
         postRepo.delete(post);
     }
 
-    /**
-     * 根据 ID 查找帖子，帖子不存在或已下架时抛出异常。
-     */
+    /** Throws POST_NOT_FOUND if the post does not exist or is hidden. */
     private PostDO findPostById(Long postId) {
         PostDO post = postRepo.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));

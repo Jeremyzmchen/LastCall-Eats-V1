@@ -8,10 +8,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * 创建评价请求 DTO，承载用户提交评价时的数据。
- * orderId 和 rating 为必填，文字内容和图片为可选。
- */
 @Data
 public class CreateReviewRequest {
 
@@ -26,7 +22,7 @@ public class CreateReviewRequest {
     @Size(max = 500, message = "Review content cannot exceed 500 characters")
     private String content;
 
-    /** 图片 URL 列表，前端先上传到 MinIO 拿到 URL 后随评价一起提交，最多 9 张。 */
+    /** Image URLs uploaded to MinIO beforehand; max 9. */
     @Size(max = 9, message = "Cannot attach more than 9 images")
     private List<String> imageUrls;
 }

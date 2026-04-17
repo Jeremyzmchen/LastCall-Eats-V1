@@ -14,9 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * Stripe Webhook 解析门面，封装签名验证、事件反序列化和 metadata 提取的全部细节。
- * Controller 只调用 {@link #parse} 拿到标准化的 {@link WebhookRequest}，
- * 不直接依赖 Stripe SDK 的任何具体类，便于测试和未来替换支付平台。
+ * Facade that handles Stripe signature verification, event deserialization, and metadata extraction.
+ * The controller receives a plain {@link WebhookRequest} and stays decoupled from the Stripe SDK.
  */
 @Slf4j
 @Component
@@ -25,14 +24,7 @@ public class StripeWebhookFacade {
 
     private final StripeConfig stripeConfig;
 
-    /**
-     * 解析 Stripe Webhook 请求，返回标准化的业务对象。
-     * 验签失败或无法解析时返回 empty，由 Controller 决定响应码。
-     *
-     * @param payload   HTTP 请求原始 body
-     * @param sigHeader Stripe-Signature 请求头
-     * @return 解析成功的 WebhookRequest，失败时返回 empty
-     */
+    /** Parses and verifies a Stripe webhook. Returns empty on invalid signature or unrecognized payload. */
     public Optional<WebhookRequest> parse(String payload, String sigHeader) {
         Event event;
         try {

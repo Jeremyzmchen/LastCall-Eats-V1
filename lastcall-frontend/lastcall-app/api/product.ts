@@ -2,6 +2,7 @@ import { apiClient } from './client';
 
 export interface UserBrowseResponse {
   listingId: number;
+  templateId: number;
   merchantId: number;
   merchantName: string;
   merchantAddress: string;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-/** Stripe 支付策略，所有 Stripe SDK 细节集中在此类。 */
+/** Stripe payment strategy — all Stripe SDK details are contained here. */
 @Slf4j
 @Component
 public class StripePaymentStrategy implements PaymentStrategy {

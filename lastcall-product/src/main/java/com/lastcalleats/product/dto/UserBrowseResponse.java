@@ -11,6 +11,7 @@ import java.time.LocalTime;
 public class UserBrowseResponse {
 
     private Long listingId;
+    private Long templateId;
     private Long merchantId;
     private String merchantName;
     private String merchantAddress;

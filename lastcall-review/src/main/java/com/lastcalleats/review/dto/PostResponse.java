@@ -6,9 +6,6 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 帖子响应 DTO，返回给前端展示帖子详情或列表。
- */
 @Getter
 @Builder
 public class PostResponse {

@@ -14,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-/**
- * 评价服务实现类，处理评价模块的核心业务逻辑。
- * 实体创建逻辑委托给 ReviewFactory，本类只负责持久化和查询。
- */
+/** Delegates entity creation to ReviewFactory; this class only handles persistence and queries. */
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
@@ -51,10 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(this::toResponse);
     }
 
-    /**
-     * 将 ReviewDO 转换为响应 DTO。
-     * userNickname 和 userAvatarUrl 暂填 null，前端通过 userId 自行调用用户接口获取。
-     */
+    // userNickname / userAvatarUrl left null; frontend fetches them via the user API
     private ReviewResponse toResponse(ReviewDO review) {
         return ReviewResponse.builder()
                 .id(review.getId())

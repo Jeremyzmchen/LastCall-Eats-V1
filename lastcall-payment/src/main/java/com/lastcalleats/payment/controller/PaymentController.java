@@ -35,7 +35,7 @@ public class PaymentController {
     return ApiResponse.success(paymentService.createPaymentIntent(userId, request));
   }
 
-  // 兜底机制，Stripe 异步发送 webhook，防止网络抖动；本地通过 Stripe CLI 监听转发
+  // Fallback for async Stripe events; forward locally via Stripe CLI
   @PostMapping("/webhook")
   public ResponseEntity<Void> webhook(
       @RequestHeader("Stripe-Signature") String sigHeader,

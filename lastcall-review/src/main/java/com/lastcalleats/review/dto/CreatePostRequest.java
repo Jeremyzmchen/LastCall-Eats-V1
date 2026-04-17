@@ -6,9 +6,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * content 为必填项，图片和关联商家为可选。
- */
 @Data
 public class CreatePostRequest {
 
@@ -16,10 +13,9 @@ public class CreatePostRequest {
     @Size(max = 1000, message = "Post content cannot exceed 1000 characters")
     private String content;
 
-    /** 关联商家 ID，可为空。 */
-    private Long merchantId;
+    private Long merchantId; // optional
 
-    /** 图片 URL 列表，由前端先上传到 MinIO 拿到 URL 后再随帖子一起提交。最多 9 张。 */
+    /** Image URLs uploaded to MinIO beforehand; max 9. */
     @Size(max = 9, message = "Cannot attach more than 9 images")
     private List<String> imageUrls;
 }

@@ -7,6 +7,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getUserProfile, updateUserProfile, UserProfileResponse } from '../../api/user';
 import { getUserOrders, OrderResponse } from '../../api/order';
+import { createReview, getReviewByOrder } from '../../api/review';
 import { useAuthStore } from '../../store/authStore';
 import { Colors } from '../../constants/colors';
 import { ORDER_STATUS_STYLES } from '../../constants/orderStatus';
@@ -26,11 +27,26 @@ export default function MyScreen() {
   const [nickname, setNickname] = useState('');
   const [saving, setSaving] = useState(false);
 
+  const [reviewModal, setReviewModal] = useState(false);
+  const [reviewOrderId, setReviewOrderId] = useState<number | null>(null);
+  const [reviewedOrderIds, setReviewedOrderIds] = useState<Set<number>>(new Set());
+  const [rating, setRating] = useState(5);
+  const [reviewContent, setReviewContent] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
   const load = async () => {
     try {
       const [p, o] = await Promise.all([getUserProfile(), getUserOrders()]);
       setProfile(p.data.data);
-      setOrders(o.data.data);
+      const orderList: OrderResponse[] = o.data.data;
+      setOrders(orderList);
+      const completed = orderList.filter(x => x.status === 'COMPLETED');
+      const results = await Promise.all(completed.map(x => getReviewByOrder(x.id).catch(() => null)));
+      const reviewed = new Set<number>();
+      results.forEach((res, i) => {
+        if (res?.data?.data) reviewed.add(completed[i].id);
+      });
+      setReviewedOrderIds(reviewed);
     } catch {
       // silent
     } finally {
@@ -51,6 +67,27 @@ export default function MyScreen() {
       Alert.alert('Error', e.response?.data?.message || 'Failed to update');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const openReviewModal = (orderId: number) => {
+    setReviewOrderId(orderId);
+    setRating(5);
+    setReviewContent('');
+    setReviewModal(true);
+  };
+
+  const handleSubmitReview = async () => {
+    if (!reviewOrderId) return;
+    setSubmittingReview(true);
+    try {
+      await createReview({ orderId: reviewOrderId, rating, content: reviewContent });
+      setReviewedOrderIds(prev => new Set(prev).add(reviewOrderId));
+      setReviewModal(false);
+    } catch (e: any) {
+      Alert.alert('Error', e.response?.data?.message || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -115,6 +152,14 @@ export default function MyScreen() {
                   <View style={styles.orderRight}>
                     {item.status === 'PENDING_PAYMENT' && <Text style={styles.payHint}>Tap to pay</Text>}
                     {item.status === 'PAID' && <Text style={styles.payHint}>Tap for pickup code</Text>}
+                    {item.status === 'COMPLETED' && !reviewedOrderIds.has(item.id) && (
+                      <TouchableOpacity onPress={() => openReviewModal(item.id)}>
+                        <Text style={styles.reviewHint}>Write a review</Text>
+                      </TouchableOpacity>
+                    )}
+                    {item.status === 'COMPLETED' && reviewedOrderIds.has(item.id) && (
+                      <Text style={styles.reviewedHint}>Reviewed</Text>
+                    )}
                     <Text style={styles.orderDate}>{new Date(item.createdAt).toLocaleDateString()}</Text>
                   </View>
                 </View>
@@ -154,6 +199,31 @@ export default function MyScreen() {
           placeholderTextColor={Colors.textMuted}
         />
       </BottomModal>
+
+      <BottomModal
+        visible={reviewModal}
+        title="Write a Review"
+        confirmLabel="Submit"
+        onClose={() => setReviewModal(false)}
+        onConfirm={handleSubmitReview}
+        confirming={submittingReview}
+      >
+        <View style={styles.stars}>
+          {[1, 2, 3, 4, 5].map(n => (
+            <TouchableOpacity key={n} onPress={() => setRating(n)}>
+              <Ionicons name={n <= rating ? 'star' : 'star-outline'} size={32} color={Colors.secondary} />
+            </TouchableOpacity>
+          ))}
+        </View>
+        <TextInput
+          style={[styles.input, styles.reviewInput]}
+          value={reviewContent}
+          onChangeText={setReviewContent}
+          placeholder="Share your experience (optional)"
+          placeholderTextColor={Colors.textMuted}
+          multiline
+        />
+      </BottomModal>
     </View>
   );
 }
@@ -184,6 +254,8 @@ const styles = StyleSheet.create({
   orderPrice: { fontSize: 16, fontWeight: '700', color: Colors.primary },
   orderRight: { alignItems: 'flex-end', gap: 2 },
   payHint: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  reviewHint: { fontSize: 12, color: Colors.secondary, fontWeight: '600' },
+  reviewedHint: { fontSize: 12, color: Colors.textMuted },
   orderDate: { fontSize: 12, color: Colors.textSecondary },
 
   // Profile section
@@ -206,4 +278,6 @@ const styles = StyleSheet.create({
     fontSize: 15, color: Colors.text,
     borderWidth: 1, borderColor: Colors.border, marginBottom: 16,
   },
+  stars: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 16 },
+  reviewInput: { height: 100, textAlignVertical: 'top' },
 });

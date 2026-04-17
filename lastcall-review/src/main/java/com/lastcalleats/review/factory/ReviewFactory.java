@@ -13,10 +13,7 @@ import com.lastcalleats.review.repository.ReviewRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/**
- * 评价工厂类（Factory Pattern），负责创建合法的 ReviewDO 实体。
- * 封装创建评价所需的全部业务校验和数据组装，ReviewService 不感知这些细节。
- */
+/** Validates business rules and assembles a ReviewDO; does not persist. */
 @Component
 @RequiredArgsConstructor
 public class ReviewFactory {
@@ -25,14 +22,7 @@ public class ReviewFactory {
     private final ProductListingRepo listingRepo;
     private final ReviewRepo reviewRepo;
 
-    /**
-     * 校验业务规则并组装 ReviewDO，不执行数据库写入。
-     * 校验顺序：订单存在 → 订单归属当前用户 → 订单已完成 → 订单未被评价过。
-     *
-     * @param userId  当前登录用户 ID
-     * @param request 评价请求 DTO
-     * @return 组装好的 ReviewDO，由调用方负责持久化
-     */
+    /** Checks order exists → belongs to user → is COMPLETED → not yet reviewed. */
     public ReviewDO create(Long userId, CreateReviewRequest request) {
         OrderDO order = orderRepo.findById(request.getOrderId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
