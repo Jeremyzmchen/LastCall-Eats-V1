@@ -1,6 +1,3 @@
-# Environment variables
-.env
-
 # Maven
 target/
 *.class
@@ -14,3 +11,6 @@ out/
 # OS
 .DS_Store
 Thumbs.db
+
+# Documents
+documents/
