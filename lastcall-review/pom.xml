@@ -31,6 +31,14 @@
             <groupId>com.lastcalleats</groupId>
             <artifactId>lastcall-product</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.lastcalleats</groupId>
+            <artifactId>lastcall-user</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lastcalleats</groupId>
+            <artifactId>lastcall-merchant</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
