@@ -9,6 +9,8 @@ USE lastcall_eats;
 -- 清空所有数据（按外键顺序）
 -- =====================
 SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE review;
+TRUNCATE TABLE post;
 TRUNCATE TABLE pickup_code;
 TRUNCATE TABLE orders;
 TRUNCATE TABLE product_listing;
@@ -73,6 +75,41 @@ INSERT INTO `product_listing` (merchant_id, template_id, discount_price, quantit
 (3, 8, 6.00,  5, 5, '16:00', '18:00', CURDATE()),
 -- Brew & Bite Cafe 明天
 (3, 9, 7.00,  4, 4, '16:00', '18:00', DATE_ADD(CURDATE(), INTERVAL 1 DAY));
+
+-- =====================
+-- 已完成订单 (for review seed)
+-- listing_id 1=Sourdough, 4=Salmon Roll, 7=Coffee&Sandwich
+-- =====================
+INSERT INTO `orders` (user_id, listing_id, merchant_id, price, status, created_at, updated_at) VALUES
+(1, 1, 1, 4.00,  'COMPLETED', DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(2, 1, 1, 4.00,  'COMPLETED', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(3, 4, 2, 10.00, 'COMPLETED', DATE_SUB(NOW(), INTERVAL 4 DAY), DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(1, 4, 2, 10.00, 'COMPLETED', DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 7, 3, 7.00,  'COMPLETED', DATE_SUB(NOW(), INTERVAL 6 DAY), DATE_SUB(NOW(), INTERVAL 6 DAY)),
+(3, 7, 3, 7.00,  'COMPLETED', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY));
+
+-- =====================
+-- 取货码 (每个订单一条)
+-- =====================
+INSERT INTO `pickup_code` (order_id, numeric_code, qr_code, used) VALUES
+(1, '123401', 'ORDER:1', 1),
+(2, '123402', 'ORDER:2', 1),
+(3, '123403', 'ORDER:3', 1),
+(4, '123404', 'ORDER:4', 1),
+(5, '123405', 'ORDER:5', 1),
+(6, '123406', 'ORDER:6', 1);
+
+-- =====================
+-- 评价 (order unique, template_id 对应模板)
+-- template 1=Sourdough, 4=Salmon Roll, 7=Coffee&Sandwich
+-- =====================
+INSERT INTO `review` (order_id, user_id, merchant_id, template_id, rating, content, is_visible, created_at, updated_at) VALUES
+(1, 1, 1, 1, 5, 'Amazing sourdough, perfectly crusty outside and soft inside. Great value!', 1, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(2, 2, 1, 1, 4, 'Really good bread for the price. Will definitely pick up again.', 1, DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(3, 3, 2, 4, 5, 'Super fresh salmon rolls. Could not believe this was a discount deal!', 1, DATE_SUB(NOW(), INTERVAL 4 DAY), DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(4, 1, 2, 4, 4, 'Solid sushi, fresh fish and good portion size.', 1, DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(5, 2, 3, 7, 5, 'Best coffee and sandwich combo in Cambridge. The latte was perfect.', 1, DATE_SUB(NOW(), INTERVAL 6 DAY), DATE_SUB(NOW(), INTERVAL 6 DAY)),
+(6, 3, 3, 7, 3, 'Sandwich was okay, a bit dry. Coffee was good though.', 1, DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY));
 
 -- =====================
 -- 社区帖子 (user_id 1=Alice, 2=Bob, 3=Charlie)
