@@ -1,7 +1,11 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
-const BASE_URL = 'http://10.0.0.238:8080'; // Local network IP for real device testing
+const BASE_URL =
+  Constants.expoConfig?.extra?.apiUrl ||
+  process.env.EXPO_PUBLIC_API_URL ||
+  'http://localhost:8080';
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
