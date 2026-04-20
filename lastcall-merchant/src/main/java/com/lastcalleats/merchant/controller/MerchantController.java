@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 商家控制器，处理商家模块的 HTTP 请求。
- * 提供商家资料查看、更新、公开主页和仪表盘接口。
+ * REST controller for the merchant module.
+ * Exposes endpoints for profile management, the public merchant page, and the dashboard.
  */
 @RestController
 @RequestMapping("/api/merchant")
@@ -47,9 +47,7 @@ public class MerchantController {
         return ApiResponse.success(merchantService.getPublicProfile(id));
     }
 
-    /**
-     * 从 SecurityContextHolder 获取当前登录商家的 ID。
-     */
+    // Extract the authenticated merchant ID from the SecurityContext
     private Long getCurrentMerchantId() {
         String merchantId = SecurityContextHolder.getContext().getAuthentication().getName();
         return Long.parseLong(merchantId);

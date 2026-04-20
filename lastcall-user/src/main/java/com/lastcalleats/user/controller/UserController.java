@@ -15,8 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
- * 用户控制器，处理用户模块的 HTTP 请求。
- * 提供个人资料查看、更新、头像上传和收藏管理接口。
+ * REST controller for the user module.
+ * Exposes endpoints for profile management, avatar upload, and favourite listings.
  */
 @RestController
 @RequestMapping("/api/user")
@@ -72,9 +72,7 @@ public class UserController {
         return ApiResponse.success(favoriteService.isFavorite(userId, listingId));
     }
 
-    /**
-     * 从 SecurityContextHolder 获取当前登录用户的 ID。
-     */
+    // Extract the authenticated user ID from the SecurityContext
     private Long getCurrentUserId() {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         return Long.parseLong(userId);

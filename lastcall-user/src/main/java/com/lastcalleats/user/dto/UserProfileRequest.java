@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/** Request DTO for updating a user's profile. */
 @Data
 public class UserProfileRequest {
 

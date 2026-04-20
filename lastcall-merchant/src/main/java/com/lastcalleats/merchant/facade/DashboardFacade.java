@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * 商家仪表盘门面类（Facade Pattern）。
- * 聚合来自多个模块的数据（订单统计、商品统计），封装成一个统一的响应。
- * Controller 只需调用 Facade 的一个方法，不需要知道数据来自哪些模块。
+ * Facade for the merchant dashboard (Facade Pattern).
+ * Aggregates order and listing statistics from multiple modules into a single response,
+ * so the controller only needs to call one method without knowing which modules are involved.
  */
 @Component
 @RequiredArgsConstructor
@@ -19,10 +19,10 @@ public class DashboardFacade {
     private final ListingStatsProvider listingStatsProvider;
 
     /**
-     * 获取商家仪表盘数据，聚合订单和商品模块的统计信息。
+     * Aggregates dashboard data for the given merchant.
      *
-     * @param merchantId 商家 ID
-     * @return 包含今日订单数、今日收入、在售商品数的响应
+     * @param merchantId the merchant's ID
+     * @return a response containing today's order count, today's revenue, and active listing count
      */
     public MerchantDashboardResponse getDashboard(Long merchantId) {
         return MerchantDashboardResponse.builder()

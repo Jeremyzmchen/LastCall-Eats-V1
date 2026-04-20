@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * 用户收藏数据访问接口，对应 user_favorite 表。
- * 提供收藏关系的增删查操作，Spring 会根据方法名自动生成 SQL。
- */
+/** Spring Data JPA repository for UserFavoriteDO. */
 @Repository
 public interface UserFavoriteRepo extends JpaRepository<UserFavoriteDO, Long> {
 

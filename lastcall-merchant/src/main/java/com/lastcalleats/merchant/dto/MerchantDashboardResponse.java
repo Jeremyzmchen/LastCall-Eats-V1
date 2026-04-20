@@ -5,10 +5,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 
-/**
- * 商家仪表盘响应 DTO，聚合多个模块的数据返回给前端。
- * 由 DashboardFacade 组装，包含今日订单数、今日收入、在售商品数。
- */
+/** Response DTO for the merchant dashboard; aggregates today's order count, revenue, and active listing count. */
 @Getter
 @Builder
 public class MerchantDashboardResponse {

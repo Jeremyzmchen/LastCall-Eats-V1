@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 收藏服务实现类，处理用户收藏 listing 的业务逻辑。
- */
+/** Implementation of FavoriteService. */
 @Service
 @RequiredArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {
