@@ -4,14 +4,21 @@ const path = require('path');
 
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
+  const wifiKeywords = ['wi-fi', 'wifi', 'wlan', 'en0', 'en1', 'wlp'];
+  const wifiCandidates = [];
+  const otherCandidates = [];
+
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name]) {
       if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
+        const isWifi = wifiKeywords.some(k => name.toLowerCase().includes(k));
+        if (isWifi) wifiCandidates.push(iface.address);
+        else otherCandidates.push(iface.address);
       }
     }
   }
-  return null;
+
+  return wifiCandidates[0] || otherCandidates[0] || null;
 }
 
 const ip = getLocalIP();

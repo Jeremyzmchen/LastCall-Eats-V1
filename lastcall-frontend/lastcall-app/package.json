@@ -5,6 +5,7 @@
   "scripts": {
     "start": "expo start",
     "dev": "node scripts/set-local-ip.js && expo start --clear",
+    "tunnel": "expo start --tunnel --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
