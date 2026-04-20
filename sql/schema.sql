@@ -42,22 +42,6 @@ CREATE TABLE IF NOT EXISTS `merchant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================
--- 用户收藏表
--- =====================
-CREATE TABLE IF NOT EXISTS `user_favorite` (
-    `id`          BIGINT    NOT NULL AUTO_INCREMENT,
-    `user_id`     BIGINT    NOT NULL,
-    `listing_id`  BIGINT    NOT NULL,
-    `created_at`  DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_user_favorite` (`user_id`, `listing_id`),
-    KEY `idx_user_favorite_user` (`user_id`),
-    KEY `idx_user_favorite_listing` (`listing_id`),
-    CONSTRAINT `fk_user_favorite_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-    CONSTRAINT `fk_user_favorite_listing` FOREIGN KEY (`listing_id`) REFERENCES `product_listing` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- =====================
 -- 商品模板表
 -- =====================
 CREATE TABLE IF NOT EXISTS `product_template` (
@@ -96,6 +80,22 @@ CREATE TABLE IF NOT EXISTS `product_listing` (
     KEY `idx_listing_date` (`date`),
     CONSTRAINT `fk_listing_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`),
     CONSTRAINT `fk_listing_template` FOREIGN KEY (`template_id`) REFERENCES `product_template` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================
+-- 用户收藏表
+-- =====================
+CREATE TABLE IF NOT EXISTS `user_favorite` (
+    `id`          BIGINT    NOT NULL AUTO_INCREMENT,
+    `user_id`     BIGINT    NOT NULL,
+    `listing_id`  BIGINT    NOT NULL,
+    `created_at`  DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_favorite` (`user_id`, `listing_id`),
+    KEY `idx_user_favorite_user` (`user_id`),
+    KEY `idx_user_favorite_listing` (`listing_id`),
+    CONSTRAINT `fk_user_favorite_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `fk_user_favorite_listing` FOREIGN KEY (`listing_id`) REFERENCES `product_listing` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================
