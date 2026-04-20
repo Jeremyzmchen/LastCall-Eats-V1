@@ -8,9 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-/**
- * 收藏 listing 响应 DTO，用于用户查看收藏列表时返回。
- */
+/** Response DTO for a favourited product listing; aggregates listing, template, and merchant data. */
 @Getter
 @Builder
 public class FavoriteListingResponse {

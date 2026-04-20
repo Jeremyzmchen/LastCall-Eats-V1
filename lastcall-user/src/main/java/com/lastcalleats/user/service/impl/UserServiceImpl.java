@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 用户服务实现类，处理用户模块的核心业务逻辑。
- * 包括个人资料的查看、更新和头像上传。
- */
+/** Implementation of UserService. */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -40,24 +37,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileResponse uploadAvatar(Long userId, MultipartFile file) {
         UserDO user = findUserById(userId);
-        // 调用策略接口上传文件，不关心具体存在哪里
+        // Delegate to the storage strategy — implementation details are irrelevant here
         String avatarUrl = storageStrategy.upload(file, "avatars");
         user.setAvatarUrl(avatarUrl);
         userRepo.save(user);
         return toResponse(user);
     }
 
-    /**
-     * 根据 ID 查找用户，不存在则抛出异常。
-     */
+    // Fetch user by ID; throw BusinessException if not found
     private UserDO findUserById(Long userId) {
         return userRepo.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
-    /**
-     * 将 Entity 转换为 DTO，避免重复代码。
-     */
+    // Map UserDO to response DTO
     private UserProfileResponse toResponse(UserDO user) {
         return UserProfileResponse.builder()
                 .id(user.getId())

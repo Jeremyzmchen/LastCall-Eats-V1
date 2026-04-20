@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/** Spring Data JPA repository for UserDO. */
 @Repository
 public interface UserRepo extends JpaRepository<UserDO, Long> {
 

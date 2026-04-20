@@ -11,9 +11,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 订单统计数据提供者实现类。
- * 实现 common 模块中定义的 OrderStatsProvider 接口，
- * 供 merchant 模块的 DashboardFacade 调用，避免模块间的循环依赖。
+ * Implementation of {@link com.lastcalleats.common.provider.OrderStatsProvider} in the order module.
+ * Supplies today's order count and revenue to the merchant dashboard without creating
+ * a direct merchant → order module dependency.
  */
 @Component
 @RequiredArgsConstructor

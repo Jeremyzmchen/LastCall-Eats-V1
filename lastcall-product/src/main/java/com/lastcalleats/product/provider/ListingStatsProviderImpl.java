@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * 商品上架统计数据提供者实现类。
- * 实现 common 模块中定义的 ListingStatsProvider 接口，
- * 供 merchant 模块的 DashboardFacade 调用，避免模块间的循环依赖。
+ * Implementation of {@link com.lastcalleats.common.provider.ListingStatsProvider} in the product module.
+ * Supplies the active listing count to the merchant dashboard without creating
+ * a direct merchant → product module dependency.
  */
 @Component
 @RequiredArgsConstructor

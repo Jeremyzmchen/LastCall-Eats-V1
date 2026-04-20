@@ -5,10 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-/**
- * 收藏商家响应 DTO，用于用户查看收藏列表时返回。
- * 包含商家的基本信息和收藏时间，不包含商家的敏感数据。
- */
+/** Response DTO for a favourited merchant entry. */
 @Getter
 @Builder
 public class FavoriteMerchantResponse {

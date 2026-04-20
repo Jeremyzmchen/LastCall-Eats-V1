@@ -7,10 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-/**
- * 用户实体类，对应数据库中的 user 表。
- * 存储用户的基本信息，包括邮箱、昵称、头像链接等。
- */
+/** JPA entity mapped to the user table. */
 @Entity
 @Table(name = "user")
 @Getter
@@ -36,7 +33,7 @@ public class UserDO {
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;
 
-    // V2 预留：第三方登录（Google / Facebook）
+    // V2 reserved: third-party login (Google / Facebook)
     //@Enumerated(EnumType.STRING)
     //@Column(name = "auth_provider", nullable = false, length = 20)
     //private AuthProvider authProvider = AuthProvider.LOCAL;
@@ -55,7 +52,7 @@ public class UserDO {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // V2 预留
+    // V2 reserved
     //public enum AuthProvider {
     //    LOCAL, GOOGLE, FACEBOOK
     //}

@@ -10,10 +10,7 @@ import com.lastcalleats.merchant.service.MerchantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-/**
- * 商家服务实现类，处理商家模块的核心业务逻辑。
- * 包括商家资料的查看、更新和公开主页。
- */
+/** Implementation of MerchantService. */
 @Service
 @RequiredArgsConstructor
 public class MerchantServiceImpl implements MerchantService {
@@ -42,17 +39,13 @@ public class MerchantServiceImpl implements MerchantService {
         return toResponse(merchant);
     }
 
-    /**
-     * 根据 ID 查找商家，不存在则抛出异常。
-     */
+    // Fetch merchant by ID; throw BusinessException if not found
     private MerchantDO findMerchantById(Long merchantId) {
         return merchantRepo.findById(merchantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MERCHANT_NOT_FOUND));
     }
 
-    /**
-     * 将 Entity 转换为 DTO，避免重复代码。
-     */
+    // Map MerchantDO to response DTO
     private MerchantProfileResponse toResponse(MerchantDO merchant) {
         return MerchantProfileResponse.builder()
                 .id(merchant.getId())

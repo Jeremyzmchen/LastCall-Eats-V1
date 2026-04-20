@@ -8,10 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * 商家实体类，对应数据库中的 merchant 表。
- * 存储商家的基本信息，包括店名、地址、营业时间、头图链接等。
- */
+/** JPA entity mapped to the merchant table. */
 @Entity
 @Table(name = "merchant")
 @Getter
@@ -34,7 +31,7 @@ public class MerchantDO {
     @Column(nullable = false, length = 255)
     private String name;
 
-    // V2 预留：商家电话、头图、简介
+    // V2 reserved: phone, cover image URL, description
     //@Column(length = 20)
     //private String phone;
 
@@ -47,7 +44,7 @@ public class MerchantDO {
     @Column(nullable = false, length = 500)
     private String address;
 
-    // V2 预留：地理位置（附近商家搜索）
+    // V2 reserved: geolocation (nearby merchant search)
     //@Column(precision = 10, scale = 7)
     //private BigDecimal latitude;
 
@@ -57,7 +54,7 @@ public class MerchantDO {
     @Column(name = "business_hours", length = 255)
     private String businessHours;
 
-    // V2 预留：评分系统（依赖评价模块）
+    // V2 reserved: rating system (depends on the review module)
     //@Column(nullable = false, precision = 2, scale = 1)
     //private BigDecimal rating = BigDecimal.ZERO;
 

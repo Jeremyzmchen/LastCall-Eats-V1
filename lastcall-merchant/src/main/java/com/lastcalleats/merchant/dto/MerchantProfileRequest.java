@@ -4,10 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-/**
- * 商家资料更新请求 DTO，接收前端传来的商家信息。
- * 只包含商家可以自己修改的字段，不包含 id、email 等不可变字段。
- */
+/** Request DTO for updating a merchant's profile. */
 @Data
 public class MerchantProfileRequest {
 
