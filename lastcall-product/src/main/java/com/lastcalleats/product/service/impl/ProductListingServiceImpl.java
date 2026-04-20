@@ -103,8 +103,8 @@ public class ProductListingServiceImpl implements ProductListingService {
   @Override
   @Transactional(readOnly = true)
   public List<ListingResponse> getMerchantListings(Long merchantId) {
-    // Load all listings for this merchant
-    List<ProductListingDO> listings = productListingRepo.findByMerchantId(merchantId);
+    // Load only active listings for this merchant
+    List<ProductListingDO> listings = productListingRepo.findByMerchantIdAndIsAvailableTrue(merchantId);
 
     // Convert each listing entity to response DTO
     return listings.stream()
@@ -146,8 +146,8 @@ public class ProductListingServiceImpl implements ProductListingService {
   @Override
   @Transactional(readOnly = true)
   public List<UserBrowseResponse> browseAvailableListings() {
-    // Load all listing records from the database
-    List<ProductListingDO> listings = productListingRepo.findAll();
+    // Load all listing records from the database, newest first
+    List<ProductListingDO> listings = productListingRepo.findAllByOrderByCreatedAtDesc();
 
     return listings.stream()
         // Keep only listings that are marked as available

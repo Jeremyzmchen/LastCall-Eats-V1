@@ -91,6 +91,7 @@ public class ProductTemplateServiceImpl implements ProductTemplateService {
     template.setName(request.getName());
     template.setDescription(request.getDescription());
     template.setOriginalPrice(request.getOriginalPrice());
+    template.setIsActive(true);
 
     ProductTemplateDO updatedTemplate = productTemplateRepo.save(template);
     return toResponse(updatedTemplate);

@@ -12,4 +12,6 @@ public interface ProductListingRepo extends JpaRepository<ProductListingDO, Long
     List<ProductListingDO> findByMerchantId(Long merchantId);
 
     List<ProductListingDO> findByMerchantIdAndIsAvailableTrue(Long merchantId);
+
+    List<ProductListingDO> findAllByOrderByCreatedAtDesc();
 }

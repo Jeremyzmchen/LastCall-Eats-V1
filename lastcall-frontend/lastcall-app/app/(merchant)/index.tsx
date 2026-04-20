@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 import { getMerchantDashboard, getMerchantProfile, MerchantDashboardResponse } from '../../api/merchant';
 import { Colors } from '../../constants/colors';
 import LoadingCenter from '../../components/LoadingCenter';
@@ -24,7 +25,7 @@ export default function DashboardScreen() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useFocusEffect(useCallback(() => { load(); }, []));
 
   if (loading) return <LoadingCenter />;
 
