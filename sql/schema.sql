@@ -47,14 +47,14 @@ CREATE TABLE IF NOT EXISTS `merchant` (
 CREATE TABLE IF NOT EXISTS `user_favorite` (
     `id`          BIGINT    NOT NULL AUTO_INCREMENT,
     `user_id`     BIGINT    NOT NULL,
-    `merchant_id` BIGINT    NOT NULL,
+    `listing_id`  BIGINT    NOT NULL,
     `created_at`  DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_user_favorite` (`user_id`, `merchant_id`),
+    UNIQUE KEY `uk_user_favorite` (`user_id`, `listing_id`),
     KEY `idx_user_favorite_user` (`user_id`),
-    KEY `idx_user_favorite_merchant` (`merchant_id`),
+    KEY `idx_user_favorite_listing` (`listing_id`),
     CONSTRAINT `fk_user_favorite_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-    CONSTRAINT `fk_user_favorite_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`)
+    CONSTRAINT `fk_user_favorite_listing` FOREIGN KEY (`listing_id`) REFERENCES `product_listing` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
 -- 取货码表
 -- =====================
 CREATE TABLE IF NOT EXISTS `pickup_code` (
-     `id`           BIGINT       NOT NULL AUTO_INCREMENT,
+    `id`           BIGINT       NOT NULL AUTO_INCREMENT,
     `order_id`     BIGINT       NOT NULL,
     `numeric_code` VARCHAR(6)   NOT NULL,
     `qr_code`      TEXT         DEFAULT NULL,
@@ -132,4 +132,51 @@ CREATE TABLE IF NOT EXISTS `pickup_code` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_order_id` (`order_id`),
     CONSTRAINT `fk_pickup_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================
+-- 评价表
+-- =====================
+CREATE TABLE IF NOT EXISTS `review` (
+    `id`          BIGINT          NOT NULL AUTO_INCREMENT,
+    `order_id`    BIGINT          NOT NULL,
+    `user_id`     BIGINT          NOT NULL,
+    `merchant_id` BIGINT          NOT NULL,
+    `template_id` BIGINT          NOT NULL,
+    `rating`      INT             NOT NULL,
+    `content`     TEXT            DEFAULT NULL,
+    `image_urls`  JSON            DEFAULT NULL,
+    `is_visible`  TINYINT(1)      NOT NULL DEFAULT 1,
+    `created_at`  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_review_order` (`order_id`),
+    KEY `idx_review_user` (`user_id`),
+    KEY `idx_review_merchant` (`merchant_id`),
+    KEY `idx_review_template` (`template_id`),
+    CONSTRAINT `fk_review_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+    CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `fk_review_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`),
+    CONSTRAINT `fk_review_template` FOREIGN KEY (`template_id`) REFERENCES `product_template` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================
+-- 社区帖子表
+-- =====================
+CREATE TABLE IF NOT EXISTS `post` (
+    `id`            BIGINT      NOT NULL AUTO_INCREMENT,
+    `user_id`       BIGINT      NOT NULL,
+    `merchant_id`   BIGINT      DEFAULT NULL,
+    `content`       TEXT        NOT NULL,
+    `image_urls`    JSON        DEFAULT NULL,
+    `like_count`    INT         NOT NULL DEFAULT 0,
+    `comment_count` INT         NOT NULL DEFAULT 0,
+    `is_visible`    TINYINT(1)  NOT NULL DEFAULT 1,
+    `created_at`    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_post_user` (`user_id`),
+    KEY `idx_post_merchant` (`merchant_id`),
+    CONSTRAINT `fk_post_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `fk_post_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
