@@ -11,34 +11,46 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 订单统计数据提供者实现类。
- * 实现 common 模块中定义的 OrderStatsProvider 接口，
- * 供 merchant 模块的 DashboardFacade 调用，避免模块间的循环依赖。
+ * Supplies order statistics to other modules through the shared {@link OrderStatsProvider}
+ * contract. This implementation keeps merchant dashboard metrics inside the order module while
+ * avoiding a direct dependency from common code back to order features.
  */
 @Component
 @RequiredArgsConstructor
 public class OrderStatsProviderImpl implements OrderStatsProvider {
 
-    private final OrderRepo orderRepo;
+  private final OrderRepo orderRepo;
 
-    @Override
-    public int getTodayOrderCount(Long merchantId) {
-        List<OrderDO> orders = orderRepo.findByMerchantId(merchantId);
-        LocalDate today = LocalDate.now();
-        return (int) orders.stream()
-                .filter(order -> order.getCreatedAt().toLocalDate().equals(today))
-                .count();
-    }
+  /**
+   * Counts the orders created today for the specified merchant.
+   *
+   * @param merchantId ID of the merchant whose orders should be counted
+   * @return number of orders created today
+   */
+  @Override
+  public int getTodayOrderCount(Long merchantId) {
+    List<OrderDO> orders = orderRepo.findByMerchantId(merchantId);
+    LocalDate today = LocalDate.now();
+    return (int) orders.stream()
+        .filter(order -> order.getCreatedAt().toLocalDate().equals(today))
+        .count();
+  }
 
-    @Override
-    public BigDecimal getTodayRevenue(Long merchantId) {
-        List<OrderDO> orders = orderRepo.findByMerchantId(merchantId);
-        LocalDate today = LocalDate.now();
-        return orders.stream()
-                .filter(order -> order.getCreatedAt().toLocalDate().equals(today))
-                .filter(order -> order.getStatus() == OrderDO.OrderStatus.PAID
-                        || order.getStatus() == OrderDO.OrderStatus.COMPLETED)
-                .map(OrderDO::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+  /**
+   * Calculates today's recognized revenue for the specified merchant.
+   *
+   * @param merchantId ID of the merchant whose revenue should be calculated
+   * @return sum of paid or completed order amounts created today
+   */
+  @Override
+  public BigDecimal getTodayRevenue(Long merchantId) {
+    List<OrderDO> orders = orderRepo.findByMerchantId(merchantId);
+    LocalDate today = LocalDate.now();
+    return orders.stream()
+        .filter(order -> order.getCreatedAt().toLocalDate().equals(today))
+        .filter(order -> order.getStatus() == OrderDO.OrderStatus.PAID
+            || order.getStatus() == OrderDO.OrderStatus.COMPLETED)
+        .map(OrderDO::getPrice)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
 }

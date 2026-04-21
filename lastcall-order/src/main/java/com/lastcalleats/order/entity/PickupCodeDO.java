@@ -16,7 +16,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
- * Entity for the {@code pickup_code} table.
+ * Maps the pickup credential record stored in the {@code pickup_code} table. It keeps the generated
+ * numeric and QR-based pickup values separate from the main order entity while preserving a
+ * one-to-one link back to the order.
  */
 @Entity
 @Table(name = "pickup_code")
@@ -27,24 +29,23 @@ import java.time.LocalDateTime;
 @Builder
 public class PickupCodeDO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "order_id", nullable = false, unique = true)
-    private Long orderId;
+  @Column(name = "order_id", nullable = false, unique = true)
+  private Long orderId;
 
-    @Column(name = "numeric_code", nullable = false, length = 6)
-    private String numericCode;
+  @Column(name = "numeric_code", nullable = false, length = 6)
+  private String numericCode;
 
-    // The backend gives the QR string, and the frontend turns it into a QR code.
-    @Column(name = "qr_code", columnDefinition = "TEXT")
-    private String qrCode;
+  @Column(name = "qr_code", columnDefinition = "TEXT")
+  private String qrCode;
 
-    @Column(name = "used", nullable = false)
-    private Boolean used = false;
+  @Column(name = "used", nullable = false)
+  private Boolean used = false;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 }

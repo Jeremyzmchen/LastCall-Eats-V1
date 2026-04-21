@@ -3,17 +3,28 @@ package com.lastcalleats.order.state;
 import com.lastcalleats.order.entity.OrderDO;
 
 /**
- * State object for paid orders.
+ * Represents orders that have been paid and are ready for fulfillment. This state allows completion
+ * when pickup succeeds while preventing unsupported backward transitions.
  */
 public class PaidState implements OrderState {
 
-    @Override
-    public OrderDO.OrderStatus getStatus() {
-        return OrderDO.OrderStatus.PAID;
-    }
+  /**
+   * Returns the order status represented by this state object.
+   *
+   * @return paid status
+   */
+  @Override
+  public OrderDO.OrderStatus getStatus() {
+    return OrderDO.OrderStatus.PAID;
+  }
 
-    @Override
-    public void complete(OrderDO order) {
-        order.setStatus(OrderDO.OrderStatus.COMPLETED);
-    }
+  /**
+   * Transitions an order from paid to completed.
+   *
+   * @param order order to update
+   */
+  @Override
+  public void complete(OrderDO order) {
+    order.setStatus(OrderDO.OrderStatus.COMPLETED);
+  }
 }
