@@ -9,26 +9,52 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Request DTO used to create a product listing.
+ *
+ * A listing represents a specific product offer published by a merchant
+ * for a particular day, including discount price, quantity, and pickup time.
+ */
 @Data
 public class ListingRequest {
 
-    @NotNull
-    private Long templateId;
+  /**
+   * Id of the product template used to create this listing.
+   */
+  @NotNull
+  private Long templateId;
 
-    @NotNull
-    @DecimalMin(value = "0.01", message = "Discount price must be greater than 0")
-    private BigDecimal discountPrice;
+  /**
+   * Discounted selling price of the listing.
+   * Must be greater than 0.
+   */
+  @NotNull
+  @DecimalMin(value = "0.01", message = "Discount price must be greater than 0")
+  private BigDecimal discountPrice;
 
-    @NotNull
-    @Min(value = 1, message = "Quantity must be at least 1")
-    private Integer quantity;
+  /**
+   * Total quantity available when the listing is created.
+   * Must be at least 1.
+   */
+  @NotNull
+  @Min(value = 1, message = "Quantity must be at least 1")
+  private Integer quantity;
 
-    @NotNull
-    private LocalTime pickupStart;
+  /**
+   * Start time of the pickup window.
+   */
+  @NotNull
+  private LocalTime pickupStart;
 
-    @NotNull
-    private LocalTime pickupEnd;
+  /**
+   * End time of the pickup window.
+   */
+  @NotNull
+  private LocalTime pickupEnd;
 
-    @NotNull
-    private LocalDate date;
+  /**
+   * Date on which the listing is available for pickup.
+   */
+  @NotNull
+  private LocalDate date;
 }

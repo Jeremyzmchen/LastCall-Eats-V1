@@ -7,6 +7,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Response DTO representing a product listing.
+ *
+ * A listing is created by a merchant based on a product template.
+ * It includes pricing, quantity, availability, and pickup time details.
+ */
+
 @Getter
 @Builder
 public class ListingResponse {
