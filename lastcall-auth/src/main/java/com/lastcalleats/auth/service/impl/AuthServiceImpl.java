@@ -17,6 +17,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class implements the authentication business logic for both users and merchants.
+ * It handles registration, login, password encryption, duplicate account checking,
+ * and token generation.
+ *
+ * The service acts as the central coordination layer between controllers, repositories,
+ * and JWT utilities. It ensures that authentication-related rules are handled consistently.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -29,6 +37,16 @@ public class AuthServiceImpl implements AuthService {
   @Value("${app.jwt.expiration-ms:86400000}")
   private Long expirationMs;
 
+  /**
+   * Registers a new user account.
+   *
+   * This method first checks whether the email is already used. If the email is available,
+   * it encrypts the password, saves the account, generates a JWT token, and returns
+   * an authentication response.
+   *
+   * @param request the user registration request
+   * @return authentication information for the registered user
+   */
   @Override
   public AuthResponse registerUser(UserRegisterRequest request) {
     if (userRepo.existsByEmail(request.getEmail())) {
@@ -46,6 +64,15 @@ public class AuthServiceImpl implements AuthService {
     return buildResponse(token, user.getId(), user.getEmail(), "ROLE_USER");
   }
 
+  /**
+   * Registers a new merchant account.
+   *
+   * This method validates merchant uniqueness by email, encrypts the password,
+   * stores merchant information in the database, and generates a JWT token.
+   *
+   * @param request the merchant registration request
+   * @return authentication information for the registered merchant
+   */
   @Override
   public AuthResponse registerMerchant(MerchantRegisterRequest request) {
     if (merchantRepo.existsByEmail(request.getEmail())) {
@@ -64,6 +91,17 @@ public class AuthServiceImpl implements AuthService {
     return buildResponse(token, merchant.getId(), merchant.getEmail(), "ROLE_MERCHANT");
   }
 
+  /**
+   * Authenticates an existing user or merchant based on role.
+   *
+   * This method checks account existence, validates the password, generates a JWT token,
+   * and returns authentication information. It supports both normal user login
+   * and merchant login.
+   *
+   * @param request the login request containing email and password
+   * @param role the role used to determine whether the account is a user or merchant
+   * @return authentication information for the logged-in account
+   */
   @Override
   public AuthResponse login(LoginRequest request, String role) {
     if ("USER".equalsIgnoreCase(role)) {
@@ -93,7 +131,19 @@ public class AuthServiceImpl implements AuthService {
     throw new BusinessException(ErrorCode.BAD_REQUEST, "Invalid role");
   }
 
-  private AuthResponse buildResponse(String token, Long userId, String email, String role) {
+  /**
+   * Builds a standardized authentication response object.
+   *
+   * This helper method collects token information and account identity fields
+   * into a single DTO that can be returned to the client.
+   *
+   * @param token the generated JWT token
+   * @param userId the ID of the authenticated account
+   * @param email the email of the authenticated account
+   * @param role the role of the authenticated account
+   * @return a populated authentication response
+   */
+  public AuthResponse buildResponse(String token, Long userId, String email, String role) {
     AuthResponse response = new AuthResponse();
     response.setAccessToken(token);
     response.setTokenType("Bearer");
