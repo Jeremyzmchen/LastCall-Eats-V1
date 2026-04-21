@@ -1,3 +1,86 @@
+# LastCall Eats — Getting Started Guide
+
+## 1. Pull the Latest Code
+
+```bash
+git pull origin main
+```
+
+---
+
+## 2. Start the Backend
+
+Open the project root directory in **IntelliJ IDEA**.
+
+Open `lastcall-api/src/main/resources/application-dev.yml` and make sure the database password matches your local setup:
+
+```yaml
+spring:
+  datasource:
+    password: your_local_database_password
+```
+
+Other configurations (JWT, Stripe key, etc.) are already set in the `.env` file — no changes needed.
+
+Run the main entry class:
+`lastcall-api/src/main/java/com/lastcalleats/LastCallEatsApplication.java`
+
+Right-click → **Run**. You'll know it's up when you see `Started LastCallEatsApplication` in the console.
+
+---
+
+## 3. Initialize the Database
+
+**First-time setup requires creating tables and seeding test data.**
+
+### Using Navicat
+
+1. Connect to your local MySQL instance
+2. Open a new query, then run `sql/schema.sql`
+3. Open another new query, then run `sql/seed.sql`
+
+### Without Navicat (Terminal)
+
+```bash
+mysql -u root -p lastcall_eats < sql/schema.sql
+mysql -u root -p lastcall_eats < sql/seed.sql
+```
+
+### Test Accounts (password for all: `111111`)
+
+**Users**
+
+| Email | Nickname |
+|------|------|
+| alice@example.com | Alice |
+| bob@example.com | Bob |
+| charlie@example.com | Charlie |
+
+**Merchants**
+
+| Email | Store Name |
+|------|------|
+| bakery@example.com | Golden Bakery |
+| sushi@example.com | Sakura Sushi |
+| cafe@example.com | Brew & Bite Cafe |
+
+---
+
+## 4. Start the Frontend
+
+```bash
+cd lastcall-frontend/lastcall-app
+npm install        # first time only
+npm run dev        # auto-detects your local IP and starts the server
+```
+
+Open **Expo Go** on your phone and scan the QR code shown in the terminal.
+
+> Your phone and computer must be on the same WiFi network. If you switch networks, just re-run `npm run dev` — no code changes required.
+
+
+
+---
 # LastCall Eats — 启动指南
 
 ## 1. 拉取代码
