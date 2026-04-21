@@ -10,6 +10,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Entity class representing a product listing.
+ *
+ * A product listing is a specific item published by a merchant for sale
+ * on a certain date. It is created from a product template and contains
+ * pricing, quantity, pickup time, and availability information.
+ */
 @Entity
 @Table(name = "product_listing")
 @Getter

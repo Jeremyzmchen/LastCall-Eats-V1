@@ -6,8 +6,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for product template database operations.
+ * This repository provides CRUD operations for {@link ProductTemplateDO}
+ * and custom query methods for retrieving templates by merchant.
+ */
 @Repository
 public interface ProductTemplateRepo extends JpaRepository<ProductTemplateDO, Long> {
 
-    List<ProductTemplateDO> findByMerchantId(Long merchantId);
+  /**
+   * Finds all templates belonging to the specified merchant.
+   * @param merchantId id of the merchant
+   * @return list of templates owned by the merchant
+   */
+  List<ProductTemplateDO> findByMerchantId(Long merchantId);
 }

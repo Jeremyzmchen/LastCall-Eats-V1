@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Annotation profile for LastCall Eats" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="lastcall-order" />
+        <module name="lastcall-product" />
+        <module name="lastcall-user" />
+        <module name="lastcall-auth" />
+        <module name="lastcall-common" />
+        <module name="lastcall-merchant" />
+        <module name="lastcall-api" />
+        <module name="lastcall-payment" />
+        <module name="lastcall-review" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="lastcall-api" options="-parameters" />
+      <module name="lastcall-auth" options="-parameters" />
+      <module name="lastcall-common" options="-parameters" />
+      <module name="lastcall-merchant" options="-parameters" />
+      <module name="lastcall-order" options="-parameters" />
+      <module name="lastcall-payment" options="-parameters" />
+      <module name="lastcall-product" options="-parameters" />
+      <module name="lastcall-review" options="-parameters" />
+      <module name="lastcall-user" options="-parameters" />
+    </option>
+  </component>
+</project>
