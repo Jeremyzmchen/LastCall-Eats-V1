@@ -12,20 +12,39 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-/** Implementation of UserService. */
+/**
+ * Implementation of UserService.
+ * Get, update user profile and upload avatar image.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
+    // handle file upload to local disk or cloud storage
     private final StorageStrategy storageStrategy;
 
+    /**
+     * Find user by ID and return profile data.
+     *
+     * @param userId the ID of the user to look up
+     * @return response DTO with user profile data
+     * @throws BusinessException if user not found
+     */
     @Override
     public UserProfileResponse getProfile(Long userId) {
         UserDO user = findUserById(userId);
         return toResponse(user);
     }
 
+    /**
+     * Update user nickname and save to database.
+     *
+     * @param userId  the ID of the user to update
+     * @param request contains the new nickname
+     * @return response DTO with updated profile
+     * @throws BusinessException if user not found
+     */
     @Override
     public UserProfileResponse updateProfile(Long userId, UserProfileRequest request) {
         UserDO user = findUserById(userId);
@@ -34,23 +53,32 @@ public class UserServiceImpl implements UserService {
         return toResponse(user);
     }
 
+    /**
+     * Upload avatar image and save the URL to the user record.
+     * Use StorageStrategy so we can switch storage backend without changing this class.
+     *
+     * @param userId the ID of the user uploading the avatar
+     * @param file   the image file from the request
+     * @return response DTO with updated profile including new avatar URL
+     * @throws BusinessException if user not found
+     */
     @Override
     public UserProfileResponse uploadAvatar(Long userId, MultipartFile file) {
         UserDO user = findUserById(userId);
-        // Delegate to the storage strategy — implementation details are irrelevant here
+        // call storage strategy to save file and get back the URL
         String avatarUrl = storageStrategy.upload(file, "avatars");
         user.setAvatarUrl(avatarUrl);
         userRepo.save(user);
         return toResponse(user);
     }
 
-    // Fetch user by ID; throw BusinessException if not found
+    // find user by ID, throw BusinessException if not found
     private UserDO findUserById(Long userId) {
         return userRepo.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
-    // Map UserDO to response DTO
+    // build response DTO from UserDO
     private UserProfileResponse toResponse(UserDO user) {
         return UserProfileResponse.builder()
                 .id(user.getId())

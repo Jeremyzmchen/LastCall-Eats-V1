@@ -8,7 +8,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/** JPA entity mapped to the merchant table. */
+/**
+ * JPA entity mapped to the merchant table in the database.
+ * Stores a merchant's login credentials, store information, business hours, and account status.
+ */
 @Entity
 @Table(name = "merchant")
 @Getter
@@ -26,7 +29,7 @@ public class MerchantDO {
     private String email;
 
     @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
+    private String passwordHash;  // BCrypt-hashed password; never stored as plain text
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -62,7 +65,7 @@ public class MerchantDO {
     //private Integer reviewCount = 0;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive = true;  // set to false to soft-disable the merchant account
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

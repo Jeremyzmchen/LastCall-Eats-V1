@@ -14,7 +14,10 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/** Unit tests for DashboardFacade. */
+/**
+ * Unit tests for DashboardFacade.
+ * Check that getDashboard correctly collect data from both order and listing providers.
+ */
 @ExtendWith(MockitoExtension.class)
 class DashboardFacadeTest {
 

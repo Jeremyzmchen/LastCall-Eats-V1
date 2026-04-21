@@ -17,7 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/** Unit tests for OrderStatsProviderImpl. */
+/**
+ * Unit tests for OrderStatsProviderImpl.
+ * Verify that order count and revenue are filtered correctly by date and status.
+ */
 @ExtendWith(MockitoExtension.class)
 class OrderStatsProviderImplTest {
 

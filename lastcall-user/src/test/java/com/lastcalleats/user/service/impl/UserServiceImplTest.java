@@ -22,7 +22,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-/** Unit tests for UserServiceImpl. */
+/**
+ * Unit tests for UserServiceImpl.
+ * Cover getProfile, updateProfile, and uploadAvatar with both success and not-found cases.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 

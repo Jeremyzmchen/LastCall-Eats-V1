@@ -14,7 +14,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/** Unit tests for ListingStatsProviderImpl. */
+/**
+ * Unit tests for ListingStatsProviderImpl.
+ * Check that active listing count is returned correctly for different scenarios.
+ */
 @ExtendWith(MockitoExtension.class)
 class ListingStatsProviderImplTest {
 

@@ -7,7 +7,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-/** JPA entity mapped to the user table. */
+/**
+ * JPA entity mapped to the user table in the database.
+ * Stores login credentials, nickname, avatar URL, and account status for each user.
+ */
 @Entity
 @Table(name = "user")
 @Getter
@@ -25,13 +28,13 @@ public class UserDO {
     private String email;
 
     @Column(name = "password_hash", length = 255)
-    private String passwordHash;
+    private String passwordHash;    // BCrypt-hashed password; never stored as plain text
 
     @Column(nullable = false, length = 100)
     private String nickname;
 
     @Column(name = "avatar_url", length = 500)
-    private String avatarUrl;
+    private String avatarUrl;       // URL returned by StorageStrategy after upload; null by default
 
     // V2 reserved: third-party login (Google / Facebook)
     //@Enumerated(EnumType.STRING)
@@ -42,7 +45,7 @@ public class UserDO {
     //private String authProviderId;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive = true;    // set to false to soft-disable the account
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
