@@ -1,3 +1,194 @@
+# LastCall Eats — Functional Test Checklist
+
+All test accounts use password: `111111`. See `start.md` for details.
+
+---
+
+## User Side
+
+### Authentication
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| User Registration | Enter email, password, nickname → Click *Create Account* | Registration successful, redirect to Browse page |
+| Duplicate Registration | Register with an existing email | Error: email already exists |
+| User Login | Login with `alice@example.com / 111111` | Login successful, redirect to Browse page |
+| Invalid Password | Enter wrong password | Error: invalid credentials |
+
+---
+
+### Browse (Product Browsing)
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| Browse Listings | Enter Browse page | Display all available listings for today |
+| Search | Enter “Sushi” or “Sakura” | Filtered results shown |
+| Pull to Refresh | Pull down list | Data reloads |
+| Add to Favorites | Tap heart icon | Turns red, added to favorites |
+| Remove from Favorites | Tap again | Removed from favorites |
+| View Details | Tap a listing | Navigate to listing detail page |
+
+---
+
+### Listing Details
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Details | Open detail page | Show product name, merchant, original price, discount price, remaining quantity, pickup time |
+| Favorite (Detail Page) | Tap heart icon | Syncs with Browse page |
+| Create Order | Tap *Reserve* | Navigate to payment page |
+| Duplicate Order | Tap *Reserve* again | Error: order already exists |
+
+---
+
+### Payment
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| Valid Payment | Enter `pm_card_visa` → Pay | Navigate to pickup code page |
+| Invalid Payment | Enter random string | Stripe error displayed |
+
+---
+
+### Pickup Code
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Pickup Code | After payment | Show 6-digit code + QR code + status = PAID |
+
+---
+
+### Favorites
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Favorites | Open Favorites tab | Show saved listings with details |
+| Remove Favorite | Tap heart | Removed from list |
+| Refresh | Pull down | Reload list |
+
+---
+
+### Community
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Feed | Open Community tab | Show all posts, avatar = first letter of username |
+| Create Post | Tap + → Enter content → Post | Appears at top |
+| My Posts | Switch tab | Show only user’s posts |
+| Delete Post | Tap × | Removed from list |
+
+---
+
+### Profile
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Profile | Open Profile tab | Show email and nickname |
+| Edit Nickname | Update and save | Successfully updated |
+| Logout | Tap logout | Redirect to welcome page |
+
+---
+
+## Merchant Side
+
+### Authentication
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| Merchant Registration | Enter email, password, store name, address | Registration successful |
+| Merchant Login | `bakery@example.com / 111111` | Login successful |
+
+---
+
+### Products — Templates
+**Entry:** Products tab → Templates
+
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Templates | Open tab | Show all templates |
+| Create Template | Click + → Fill info → Save | Appears in list |
+| Edit Template | Modify → Save | Updated |
+| Delete Template | Click trash → Confirm | Removed |
+
+---
+
+### Products — Listings (Daily Listings)
+**Entry:** Products tab → Today’s Listings
+
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Listings | Open tab | Show all listings |
+| Create Listing | Fill info → Create | Appears and visible to users |
+| Delete Listing | Click trash | Removed from Browse page |
+
+---
+
+### Orders
+**Entry:** Orders tab
+
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Orders | Open tab | Show all orders and status |
+
+---
+
+### Verify Pickup Code
+**Entry:** Orders tab → Verify
+
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| Enter Code | Input 6-digit code | Show user + product, success |
+| Scan QR | Scan QR code | Same result |
+| Duplicate Verification | Verify again | Error: already used |
+
+---
+
+### Profile
+| Feature | Action | Expected Result |
+|--------|--------|----------------|
+| View Profile | Open tab | Show email, store name, address |
+| Edit Profile | Update → Save | Updated |
+| Logout | Tap logout | Redirect to welcome page |
+
+---
+
+## API Endpoints Overview
+
+| Module | Method | Endpoint |
+|--------|--------|----------|
+| Auth | POST | `/api/auth/register/user` |
+| | POST | `/api/auth/register/merchant` |
+| | POST | `/api/auth/login/user` |
+| | POST | `/api/auth/login/merchant` |
+| User | GET | `/api/user/profile` |
+| | PUT | `/api/user/profile` |
+| | GET | `/api/user/favorites` |
+| | POST | `/api/user/favorites/{listingId}` |
+| | DELETE | `/api/user/favorites/{listingId}` |
+| Merchant | GET | `/api/merchant/profile` |
+| | PUT | `/api/merchant/profile` |
+| | GET | `/api/merchant/dashboard` |
+| Products (Templates) | POST | `/api/merchant/templates` |
+| | GET | `/api/merchant/templates` |
+| | PUT | `/api/merchant/templates/{id}` |
+| | DELETE | `/api/merchant/templates/{id}` |
+| Listings | GET | `/api/products/browse` |
+| | POST | `/api/merchant/listings` |
+| | GET | `/api/merchant/listings` |
+| | DELETE | `/api/merchant/listings/{id}` |
+| Orders | POST | `/api/orders` |
+| | GET | `/api/orders` |
+| | GET | `/api/orders/{id}` |
+| | GET | `/api/orders/{id}/pickup-code` |
+| | GET | `/api/merchant/orders` |
+| | PUT | `/api/merchant/orders/verify` |
+| Payment | POST | `/api/payment/create` |
+| | POST | `/api/payment/webhook` |
+| Community | POST | `/api/posts` |
+| | GET | `/api/posts` |
+| | DELETE | `/api/posts/{postId}` |
+| Reviews | POST | `/api/reviews` |
+| | GET | `/api/reviews/order/{orderId}` |
+| | GET | `/api/reviews/merchant/{merchantId}` |
+
+
+
+
+
+
+
+---
 # LastCall Eats — 功能测试清单
 
 测试账号密码统一为 `111111`，详见 `start.md`。
