@@ -19,7 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/** Unit tests for MerchantServiceImpl. */
+/**
+ * Unit tests for MerchantServiceImpl.
+ * Cover getProfile, updateProfile, and getPublicProfile with success and not-found cases.
+ */
 @ExtendWith(MockitoExtension.class)
 class MerchantServiceImplTest {
 

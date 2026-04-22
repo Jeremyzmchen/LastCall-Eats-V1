@@ -3,7 +3,10 @@ package com.lastcalleats.merchant.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-/** Response DTO for a merchant's profile; excludes sensitive fields such as password hash. */
+/**
+ * Response DTO for a merchant's profile, returned to the frontend after profile reads and updates.
+ * Excludes sensitive fields such as the password hash; built from a MerchantDO entity via the service layer.
+ */
 @Getter
 @Builder
 public class MerchantProfileResponse {
@@ -12,6 +15,6 @@ public class MerchantProfileResponse {
     private String email;
     private String name;
     private String address;
-    private String businessHours;
-    private Boolean isActive;
+    private String businessHours;   // may be null if the merchant has not set their hours
+    private Boolean isActive;       // false indicates the merchant account has been disabled
 }
