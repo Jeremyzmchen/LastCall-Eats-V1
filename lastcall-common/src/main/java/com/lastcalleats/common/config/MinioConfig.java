@@ -6,6 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Binds MinIO connection properties from {@code app.minio.*} and exposes a
+ * configured {@link MinioClient} bean for file upload operations.
+ * Currently declared but not injected by active code; the project uses
+ * {@link com.lastcalleats.common.storage.LocalStorageStrategy} in development.
+ */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "app.minio")

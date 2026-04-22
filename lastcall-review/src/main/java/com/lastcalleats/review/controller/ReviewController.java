@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+/**
+ * REST endpoints for review operations.
+ * Reviews are linked one-to-one with completed orders; the endpoints here
+ * cover creation and read-only queries by order, merchant, or product template.
+ */
 @RestController
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor

@@ -13,6 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST endpoints for community post operations.
+ * Supports creating posts, browsing by user or merchant, fetching a single
+ * post, and owner-only deletion.
+ */
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor

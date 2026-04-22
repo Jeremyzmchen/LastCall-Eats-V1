@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+/**
+ * REST endpoints for payment operations.
+ * The {@code /create} endpoint is called by the mobile client after the user
+ * confirms checkout; the {@code /webhook} endpoint receives asynchronous
+ * payment events forwarded from Stripe CLI during development.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/payment")
@@ -27,6 +33,13 @@ public class PaymentController {
   private final PaymentService paymentService;
   private final StripeWebhookFacade stripeWebhookFacade;
 
+  /**
+   * Initiates and immediately confirms a payment intent for the authenticated user.
+   *
+   * @param userId  injected from the JWT principal
+   * @param request the order and payment method details
+   * @return a wrapped {@link PaymentResponse} with the intent status
+   */
   @PostMapping("/create")
   public ApiResponse<PaymentResponse> createPaymentIntent(
       @AuthenticationPrincipal Long userId,
@@ -35,6 +48,15 @@ public class PaymentController {
     return ApiResponse.success(paymentService.createPaymentIntent(userId, request));
   }
 
+  /**
+   * Receives a raw Stripe webhook, verifies the signature via {@link StripeWebhookFacade},
+   * and delegates to the service layer. Returns 400 if the signature is invalid or the
+   * payload cannot be parsed.
+   *
+   * @param sigHeader the {@code Stripe-Signature} header sent by Stripe
+   * @param payload   the raw JSON body (must not be pre-parsed)
+   * @return 200 on success, 400 on bad signature or unrecognized payload
+   */
   // Fallback for async Stripe events; forward locally via Stripe CLI
   @PostMapping("/webhook")
   public ResponseEntity<Void> webhook(

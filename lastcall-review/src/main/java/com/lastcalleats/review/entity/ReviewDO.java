@@ -10,6 +10,11 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * JPA entity representing a customer review in the {@code review} table.
+ * Each review is uniquely tied to one completed order via a unique constraint
+ * on {@code order_id}, preventing duplicate submissions.
+ */
 @Entity
 @Table(name = "review")
 @Getter

@@ -8,6 +8,10 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Request body for submitting a review against a completed order.
+ * The rating (1–5) is required; text content and images are both optional.
+ */
 @Data
 public class CreateReviewRequest {
 

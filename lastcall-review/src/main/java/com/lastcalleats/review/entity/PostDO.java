@@ -10,6 +10,11 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * JPA entity representing a user-generated post in the {@code post} table.
+ * A post may optionally reference a merchant, and carries denormalized
+ * like/comment counters maintained by their respective services.
+ */
 @Entity
 @Table(name = "post")
 @Getter

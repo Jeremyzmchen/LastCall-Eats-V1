@@ -2,6 +2,12 @@ package com.lastcalleats.common.exception;
 
 import lombok.Getter;
 
+/**
+ * Enumeration of all recognized application error codes.
+ * Each constant pairs an HTTP status with a human-readable message so that
+ * {@link GlobalExceptionHandler} can produce consistent error responses
+ * without scattering status codes across the codebase.
+ */
 @Getter
 public enum ErrorCode {
 

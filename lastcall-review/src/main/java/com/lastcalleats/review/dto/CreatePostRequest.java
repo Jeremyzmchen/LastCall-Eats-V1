@@ -6,6 +6,11 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Request body for creating a community post.
+ * The merchant reference is optional; a post without one appears in the
+ * general feed but not on any merchant's profile page.
+ */
 @Data
 public class CreatePostRequest {
 

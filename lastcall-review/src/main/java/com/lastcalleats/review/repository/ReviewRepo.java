@@ -8,6 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Data access interface for {@link com.lastcalleats.review.entity.ReviewDO}.
+ * The {@code existsByOrderId} method is used by the factory to enforce the
+ * one-review-per-order constraint before attempting to persist a new record.
+ */
 @Repository
 public interface ReviewRepo extends JpaRepository<ReviewDO, Long> {
 

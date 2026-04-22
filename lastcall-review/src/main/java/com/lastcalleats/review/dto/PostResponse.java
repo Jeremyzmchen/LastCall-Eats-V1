@@ -6,6 +6,11 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Read-only view of a post returned to the client.
+ * Includes resolved display names for the author and merchant so the
+ * frontend does not need a separate lookup on each list item.
+ */
 @Getter
 @Builder
 public class PostResponse {

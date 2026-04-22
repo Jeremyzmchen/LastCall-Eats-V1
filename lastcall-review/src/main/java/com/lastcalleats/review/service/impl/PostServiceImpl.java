@@ -16,6 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Default implementation of {@link PostService}.
+ * Resolves author nickname and merchant name via their respective repositories
+ * when building response objects, keeping the post table free of denormalized name fields.
+ */
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -24,6 +29,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepo userRepo;
     private final MerchantRepo merchantRepo;
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public PostResponse createPost(Long userId, CreatePostRequest request) {
@@ -37,29 +43,34 @@ public class PostServiceImpl implements PostService {
         return toResponse(post);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Page<PostResponse> listAllPosts(Pageable pageable) {
         return postRepo.findByIsVisibleTrueOrderByCreatedAtDesc(pageable)
                 .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Page<PostResponse> listPostsByUser(Long userId, Pageable pageable) {
         return postRepo.findByUserIdAndIsVisibleTrueOrderByCreatedAtDesc(userId, pageable)
                 .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Page<PostResponse> listPostsByMerchant(Long merchantId, Pageable pageable) {
         return postRepo.findByMerchantIdAndIsVisibleTrueOrderByCreatedAtDesc(merchantId, pageable)
                 .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     public PostResponse getPost(Long postId) {
         return toResponse(findPostById(postId));
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deletePost(Long userId, Long postId) {

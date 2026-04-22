@@ -13,16 +13,22 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-/** Stripe payment strategy — all Stripe SDK details are contained here. */
+/**
+ * {@link PaymentStrategy} implementation that talks to the Stripe Payments API.
+ * All Stripe SDK calls are isolated here so the rest of the codebase stays
+ * independent of the specific payment provider.
+ */
 @Slf4j
 @Component
 public class StripePaymentStrategy implements PaymentStrategy {
 
+    /** {@inheritDoc} */
     @Override
     public boolean supports(String paymentType) {
         return "STRIPE".equalsIgnoreCase(paymentType);
     }
 
+    /** {@inheritDoc} */
     @Override
     public PaymentResponse pay(OrderDO order, PaymentRequest request) {
         try {

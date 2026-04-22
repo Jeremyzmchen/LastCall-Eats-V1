@@ -6,7 +6,11 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/** Excludes internal fields such as isVisible. */
+/**
+ * Read-only view of a review returned to the client.
+ * Internal fields such as {@code isVisible} are excluded; user display
+ * names are left null and fetched by the frontend via the user API.
+ */
 @Getter
 @Builder
 public class ReviewResponse {

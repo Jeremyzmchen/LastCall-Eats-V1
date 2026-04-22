@@ -14,7 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-/** Delegates entity creation to ReviewFactory; this class only handles persistence and queries. */
+/**
+ * Default implementation of {@link ReviewService}.
+ * Business rule validation (order ownership, completion status, duplicate check)
+ * is handled by {@link com.lastcalleats.review.factory.ReviewFactory}; this class
+ * is responsible only for persistence and read queries.
+ */
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
@@ -22,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepo reviewRepo;
     private final ReviewFactory reviewFactory;
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public ReviewResponse createReview(Long userId, CreateReviewRequest request) {
@@ -30,18 +36,21 @@ public class ReviewServiceImpl implements ReviewService {
         return toResponse(review);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Optional<ReviewResponse> getReviewByOrder(Long orderId) {
         return reviewRepo.findByOrderId(orderId)
                 .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Page<ReviewResponse> listReviewsByMerchant(Long merchantId, Pageable pageable) {
         return reviewRepo.findByMerchantIdAndIsVisibleTrueOrderByCreatedAtDesc(merchantId, pageable)
                 .map(this::toResponse);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Page<ReviewResponse> listReviewsByTemplate(Long templateId, Pageable pageable) {
         return reviewRepo.findByTemplateIdAndIsVisibleTrueOrderByCreatedAtDesc(templateId, pageable)

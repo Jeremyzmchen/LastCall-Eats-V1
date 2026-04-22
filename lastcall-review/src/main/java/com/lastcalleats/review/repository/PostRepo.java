@@ -6,6 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Data access interface for {@link com.lastcalleats.review.entity.PostDO}.
+ * All query methods filter by {@code isVisible = true} so soft-deleted posts
+ * are never returned to the application layer.
+ */
 @Repository
 public interface PostRepo extends JpaRepository<PostDO, Long> {
 
