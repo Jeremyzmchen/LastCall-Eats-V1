@@ -14,9 +14,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 /**
- * {@link PaymentStrategy} implementation that talks to the Stripe Payments API.
- * All Stripe SDK calls are isolated here so the rest of the codebase stays
- * independent of the specific payment provider.
+ * {@link PaymentStrategy} implementation backed by the Stripe Payments API.
+ * All Stripe SDK calls are isolated here so the rest of the codebase stays provider-independent.
  */
 @Slf4j
 @Component

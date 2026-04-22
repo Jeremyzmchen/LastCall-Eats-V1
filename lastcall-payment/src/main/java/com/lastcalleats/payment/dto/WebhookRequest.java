@@ -3,10 +3,8 @@ package com.lastcalleats.payment.dto;
 import lombok.Data;
 
 /**
- * Provider-agnostic representation of a webhook event.
- * {@link com.lastcalleats.payment.facade.StripeWebhookFacade} translates the
- * raw Stripe payload into this form so the service layer stays decoupled from
- * the Stripe SDK.
+ * Provider-agnostic representation of a webhook event. Translated from the raw Stripe payload
+ * by {@link com.lastcalleats.payment.facade.StripeWebhookFacade} to decouple the service layer from the SDK.
  */
 @Data
 public class WebhookRequest {

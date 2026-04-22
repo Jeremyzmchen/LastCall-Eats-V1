@@ -6,33 +6,34 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for {@link PendingPaymentState}.
+ * Tests the state transitions allowed by {@link PendingPaymentState}.
+ * These cases confirm that unpaid orders can either be paid or cancelled from the initial state.
  */
 class PendingPaymentStateTest {
 
-    private final PendingPaymentState state = new PendingPaymentState();
+  private final PendingPaymentState state = new PendingPaymentState();
 
-    /**
-     * Checks that a pending order can move to PAID.
-     */
-    @Test
-    void pay_shouldMoveOrderToPaid() {
-        OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PENDING_PAYMENT).build();
+  /**
+   * Verifies that a pending-payment order can transition to the paid state.
+   */
+  @Test
+  void pay_shouldMoveOrderToPaid() {
+    OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PENDING_PAYMENT).build();
 
-        state.pay(order);
+    state.pay(order);
 
-        assertEquals(OrderDO.OrderStatus.PAID, order.getStatus());
-    }
+    assertEquals(OrderDO.OrderStatus.PAID, order.getStatus());
+  }
 
-    /**
-     * Checks that a pending order can move to CANCELLED.
-     */
-    @Test
-    void cancel_shouldMoveOrderToCancelled() {
-        OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PENDING_PAYMENT).build();
+  /**
+   * Verifies that a pending-payment order can transition to the cancelled state.
+   */
+  @Test
+  void cancel_shouldMoveOrderToCancelled() {
+    OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PENDING_PAYMENT).build();
 
-        state.cancel(order);
+    state.cancel(order);
 
-        assertEquals(OrderDO.OrderStatus.CANCELLED, order.getStatus());
-    }
+    assertEquals(OrderDO.OrderStatus.CANCELLED, order.getStatus());
+  }
 }

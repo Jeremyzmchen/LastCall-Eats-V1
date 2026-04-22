@@ -10,56 +10,57 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for {@link PickupCodeFactory}.
+ * Tests the generator selection behavior provided by {@link PickupCodeFactory}.
+ * These cases verify that the factory delegates to the correct generator and rejects unsupported generator types.
  */
 class PickupCodeFactoryTest {
 
-    private final PickupCodeFactory factory = new PickupCodeFactory(List.of(
-            new NumericCodeGenerator(),
-            new QRCodeGenerator()
-    ));
+  private final PickupCodeFactory factory = new PickupCodeFactory(List.of(
+      new NumericCodeGenerator(),
+      new QRCodeGenerator()
+  ));
 
-    /**
-     * Checks that the factory returns a numeric code.
-     */
-    @Test
-    void generate_shouldReturnNumericCodeForNumericType() {
-        String result = factory.generate(buildOrder(), "NUMERIC");
+  /**
+   * Verifies that the factory returns a six-digit numeric code for the numeric generator type.
+   */
+  @Test
+  void generate_shouldReturnNumericCodeForNumericType() {
+    String result = factory.generate(buildOrder(), "NUMERIC");
 
-        assertEquals(6, result.length());
-        assertTrue(result.chars().allMatch(Character::isDigit));
-    }
+    assertEquals(6, result.length());
+    assertTrue(result.chars().allMatch(Character::isDigit));
+  }
 
-    /**
-     * Checks that the factory returns a QR string.
-     */
-    @Test
-    void generate_shouldReturnQrPayloadForQrType() {
-        String result = factory.generate(buildOrder(), "QR");
+  /**
+   * Verifies that the factory returns the QR payload generated for the QR generator type.
+   */
+  @Test
+  void generate_shouldReturnQrPayloadForQrType() {
+    String result = factory.generate(buildOrder(), "QR");
 
-        assertEquals("ORDER:10", result);
-    }
+    assertEquals("ORDER:10", result);
+  }
 
-    /**
-     * Checks that the factory rejects an unknown type.
-     */
-    @Test
-    void generate_shouldRejectUnknownType() {
-        assertThrows(RuntimeException.class, () -> factory.generate(buildOrder(), "UNKNOWN"));
-    }
+  /**
+   * Verifies that the factory rejects requests for an unsupported generator type.
+   */
+  @Test
+  void generate_shouldRejectUnknownType() {
+    assertThrows(RuntimeException.class, () -> factory.generate(buildOrder(), "UNKNOWN"));
+  }
 
-    /**
-     * Creates a simple paid order for the tests.
-     *
-     * @return test order
-     */
-    private OrderDO buildOrder() {
-        return OrderDO.builder()
-                .id(10L)
-                .userId(20L)
-                .merchantId(30L)
-                .listingId(40L)
-                .status(OrderDO.OrderStatus.PAID)
-                .build();
-    }
+  /**
+   * Creates a paid order used by the pickup code generation tests.
+   *
+   * @return order fixture for the factory test cases
+   */
+  private OrderDO buildOrder() {
+    return OrderDO.builder()
+        .id(10L)
+        .userId(20L)
+        .merchantId(30L)
+        .listingId(40L)
+        .status(OrderDO.OrderStatus.PAID)
+        .build();
+  }
 }

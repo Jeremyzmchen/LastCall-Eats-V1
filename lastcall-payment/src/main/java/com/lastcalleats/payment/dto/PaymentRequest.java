@@ -4,9 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * Request body for initiating a payment.
- * The client first confirms the payment method with the provider's SDK,
- * then sends the resulting token here for server-side charge confirmation.
+ * Request body for initiating a payment. The client obtains the payment method token
+ * from the provider's SDK and sends it here for server-side charge confirmation.
  */
 @Data
 public class PaymentRequest {

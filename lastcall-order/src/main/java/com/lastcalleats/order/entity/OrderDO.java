@@ -16,7 +16,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Entity for the {@code orders} table.
+ * Maps the core order record stored in the {@code orders} table. It captures ownership, pricing,
+ * and lifecycle state so the order module can persist and transition purchases consistently.
  */
 @Entity
 @Table(name = "orders")
@@ -27,41 +28,43 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderDO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+  @Column(name = "user_id", nullable = false)
+  private Long userId;
 
-    @Column(name = "listing_id", nullable = false)
-    private Long listingId;
+  @Column(name = "listing_id", nullable = false)
+  private Long listingId;
 
-    @Column(name = "merchant_id", nullable = false)
-    private Long merchantId;
+  @Column(name = "merchant_id", nullable = false)
+  private Long merchantId;
 
-    @Column(nullable = false, precision = 10, scale = 2) // Up to 10 digits total, with 2 digits after the decimal point.
-    private BigDecimal price;
+  @Column(nullable = false, precision = 10, scale = 2)
+  // Up to 10 digits total, with 2 digits after the decimal point.
+  private BigDecimal price;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private OrderStatus status;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 20)
+  private OrderStatus status;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt; // Filled with the current time automatically.
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDateTime createdAt; // Filled with the current time automatically.
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt; // Updated to the current time automatically.
+  @UpdateTimestamp
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt; // Updated to the current time automatically.
 
-    /**
-     * Order status values.
-     */
-    public enum OrderStatus {
-        PENDING_PAYMENT,
-        PAID,
-        COMPLETED,
-        CANCELLED
-    }
+  /**
+   * Defines the lifecycle statuses an order can move through. These values are persisted as strings
+   * so state transitions stay readable in the database.
+   */
+  public enum OrderStatus {
+    PENDING_PAYMENT,
+    PAID,
+    COMPLETED,
+    CANCELLED
+  }
 }

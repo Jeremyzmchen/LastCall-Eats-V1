@@ -5,17 +5,19 @@ import com.lastcalleats.order.dto.CodeResponse;
 
 // In V1, OrderService handles pickup code creation.
 // In V2, this service can handle expiration, resend, and batch verification.
+
 /**
- * Service interface for pickup code verification.
+ * Defines the verification workflow for pickup credentials in the order module. The service
+ * abstracts how merchants validate numeric codes or QR payloads before handing over an order.
  */
 public interface PickupCodeService {
 
-    /**
-     * Verifies a pickup code.
-     *
-     * @param merchantId current merchant ID
-     * @param request request with a pickup code or QR string
-     * @return verification result
-     */
-    CodeResponse verifyPickupCode(Long merchantId, CodeRequest request);
+  /**
+   * Verifies a pickup code.
+   *
+   * @param merchantId current merchant ID
+   * @param request    request with a pickup code or QR string
+   * @return verification result
+   */
+  CodeResponse verifyPickupCode(Long merchantId, CodeRequest request);
 }

@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Binds MinIO connection properties from {@code app.minio.*} and exposes a
- * configured {@link MinioClient} bean for file upload operations.
- * Currently declared but not injected by active code; the project uses
- * {@link com.lastcalleats.common.storage.LocalStorageStrategy} in development.
+ * Binds MinIO credentials from {@code app.minio.*} and exposes a {@link MinioClient} bean.
+ * Currently unused at runtime; the project runs {@code LocalStorageStrategy} in development.
  */
 @Data
 @Configuration

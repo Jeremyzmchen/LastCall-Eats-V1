@@ -5,8 +5,7 @@ import lombok.Getter;
 
 /**
  * Response returned after a payment intent is created or confirmed.
- * When {@code requiresAction} is {@code true} the client must complete an
- * additional step (such as 3D Secure) using the provided {@code clientSecret}.
+ * When {@code requiresAction} is true, the client must complete an extra step (e.g. 3D Secure).
  */
 @Getter
 @Builder

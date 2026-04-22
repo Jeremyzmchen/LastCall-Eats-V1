@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 /**
- * Standard envelope for all REST responses in the LastCall Eats API.
- * Null fields are omitted from the JSON output via {@code @JsonInclude}
+ * Standard envelope for all REST responses. Null fields are omitted from JSON output,
  * so error responses do not include a {@code data} key.
  *
  * @param <T> the type of the response payload

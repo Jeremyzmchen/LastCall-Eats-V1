@@ -14,10 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Factory responsible for validating review preconditions and assembling a
- * {@link ReviewDO} ready for persistence.
- * Keeping this logic out of the service layer makes the validation steps
- * independently testable without touching the database.
+ * Validates review preconditions and assembles a {@link ReviewDO} ready for persistence.
+ * Kept separate from the service layer so the validation logic is independently testable.
  */
 @Component
 @RequiredArgsConstructor
@@ -28,14 +26,12 @@ public class ReviewFactory {
     private final ReviewRepo reviewRepo;
 
     /**
-     * Validates the review preconditions and builds a {@link ReviewDO}.
-     * Checks in order: order exists → belongs to user → is COMPLETED → not yet reviewed.
+     * Checks order exists → belongs to user → is COMPLETED → not yet reviewed, then builds the entity.
      *
-     * @param userId  the authenticated reviewer; must match the order's user ID
-     * @param request the incoming review data from the client
-     * @return a fully populated {@link ReviewDO} that has not yet been saved
-     * @throws com.lastcalleats.common.exception.BusinessException for any
-     *         failed precondition (see {@link com.lastcalleats.common.exception.ErrorCode})
+     * @param userId  must match the order's user ID
+     * @param request rating, content, and image URLs from the client
+     * @return a populated {@link ReviewDO} that has not yet been saved
+     * @throws com.lastcalleats.common.exception.BusinessException on any failed precondition
      */
     public ReviewDO create(Long userId, CreateReviewRequest request) {
         OrderDO order = orderRepo.findById(request.getOrderId())

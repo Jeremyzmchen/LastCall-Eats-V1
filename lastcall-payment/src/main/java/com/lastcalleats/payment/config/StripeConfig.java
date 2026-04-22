@@ -8,10 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import jakarta.annotation.PostConstruct;
 
 /**
- * Binds Stripe credentials from {@code app.stripe.*} configuration properties
- * and initialises the Stripe SDK's global API key on startup.
- * The webhook secret is used by {@link com.lastcalleats.payment.facade.StripeWebhookFacade}
- * to verify incoming event signatures.
+ * Binds Stripe credentials from {@code app.stripe.*} and initializes the SDK's global API key on startup.
+ * The webhook secret is used by {@link com.lastcalleats.payment.facade.StripeWebhookFacade} to verify signatures.
  */
 @Data
 @Configuration
@@ -21,10 +19,7 @@ public class StripeConfig {
     private String secretKey;
     private String webhookSecret;
 
-    /**
-     * Sets {@link Stripe#apiKey} so all subsequent SDK calls are authenticated.
-     * Runs automatically after the bean is fully initialised.
-     */
+    /** Sets {@link Stripe#apiKey} so all subsequent SDK calls are authenticated. */
     @PostConstruct
     public void init() {
         Stripe.apiKey = secretKey;

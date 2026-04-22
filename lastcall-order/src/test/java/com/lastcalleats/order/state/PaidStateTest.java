@@ -8,31 +8,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Tests for {@link PaidState}.
+ * Tests the state transitions allowed by {@link PaidState}.
+ * The assertions verify that paid orders can complete and still reject unsupported transitions.
  */
 class PaidStateTest {
 
-    private final PaidState state = new PaidState();
+  private final PaidState state = new PaidState();
 
-    /**
-     * Checks that a paid order can move to COMPLETED.
-     */
-    @Test
-    void complete_shouldMoveOrderToCompleted() {
-        OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PAID).build();
+  /**
+   * Verifies that a paid order can transition to the completed state.
+   */
+  @Test
+  void complete_shouldMoveOrderToCompleted() {
+    OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PAID).build();
 
-        state.complete(order);
+    state.complete(order);
 
-        assertEquals(OrderDO.OrderStatus.COMPLETED, order.getStatus());
-    }
+    assertEquals(OrderDO.OrderStatus.COMPLETED, order.getStatus());
+  }
 
-    /**
-     * Checks that a paid order cannot be cancelled.
-     */
-    @Test
-    void cancel_shouldThrowBecauseTransitionIsNotAllowed() {
-        OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PAID).build();
+  /**
+   * Verifies that a paid order cannot transition directly to the cancelled state.
+   */
+  @Test
+  void cancel_shouldThrowBecauseTransitionIsNotAllowed() {
+    OrderDO order = OrderDO.builder().status(OrderDO.OrderStatus.PAID).build();
 
-        assertThrows(BusinessException.class, () -> state.cancel(order));
-    }
+    assertThrows(BusinessException.class, () -> state.cancel(order));
+  }
 }

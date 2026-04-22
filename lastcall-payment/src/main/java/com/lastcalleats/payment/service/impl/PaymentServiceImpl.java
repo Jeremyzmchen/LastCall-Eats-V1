@@ -22,10 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Default implementation of {@link PaymentService}.
- * Selects the appropriate {@link com.lastcalleats.payment.strategy.PaymentStrategy} at
- * runtime based on the requested payment type, and issues a pickup code once an order
- * transitions to PAID so the customer can collect at the counter.
+ * Default implementation of {@link PaymentService}. Selects the right {@link com.lastcalleats.payment.strategy.PaymentStrategy}
+ * at runtime and issues a pickup code once an order transitions to PAID.
  */
 @Service
 @Slf4j
@@ -35,11 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
   private final PickupCodeRepo pickupCodeRepo;
   private final List<PaymentStrategy> strategies;
 
-  /**
-   * {@inheritDoc}
-   * <p>Guards against duplicate pickup codes by checking whether one already
-   * exists for the order before persisting a new one.
-   */
+  /** {@inheritDoc} Guards against duplicate pickup codes before persisting a new one. */
   @Override
   @Transactional
   public PaymentResponse createPaymentIntent(Long userId, PaymentRequest request) {
@@ -82,10 +76,9 @@ public class PaymentServiceImpl implements PaymentService {
   }
 
   /**
-   * Sets the order status to PAID and generates a pickup code if none exists yet.
-   * Kept private because it is purely an internal state-transition helper.
+   * Sets the order to PAID and generates a pickup code if one does not already exist.
    *
-   * @param order the order to transition; must be currently in PENDING_PAYMENT state
+   * @param order the order to transition
    */
   private void markOrderPaid(OrderDO order) {
     order.setStatus(OrderStatus.PAID);

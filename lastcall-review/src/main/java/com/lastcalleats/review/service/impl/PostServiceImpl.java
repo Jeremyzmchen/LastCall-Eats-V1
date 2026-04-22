@@ -17,9 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Default implementation of {@link PostService}.
- * Resolves author nickname and merchant name via their respective repositories
- * when building response objects, keeping the post table free of denormalized name fields.
+ * Default implementation of {@link PostService}. Resolves author nickname and merchant name
+ * at query time so the post table stays free of denormalized name fields.
  */
 @Service
 @RequiredArgsConstructor

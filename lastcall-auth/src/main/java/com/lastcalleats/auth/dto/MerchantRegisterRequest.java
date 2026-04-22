@@ -4,6 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * This DTO is used to receive merchant registration data from the client.
+ * It contains both account credentials and merchant profile information.
+ *
+ * The class is designed specifically for merchant registration because merchants
+ * require additional fields such as business name and address.
+ */
 @Data
 public class MerchantRegisterRequest {
 

@@ -2,7 +2,6 @@ package com.lastcalleats.order.provider;
 
 import com.lastcalleats.order.entity.OrderDO;
 import com.lastcalleats.order.repository.OrderRepo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,86 +13,76 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for OrderStatsProviderImpl.
- * Verify that order count and revenue are filtered correctly by date and status.
+ * Tests the dashboard metrics exposed by {@link OrderStatsProviderImpl}.
+ * The cases verify that the provider filters by creation date and only counts revenue from paid or completed orders.
  */
 @ExtendWith(MockitoExtension.class)
 class OrderStatsProviderImplTest {
 
-    @Mock
-    private OrderRepo orderRepo;
+  @Mock
+  private OrderRepo orderRepo;
 
-    @InjectMocks
-    private OrderStatsProviderImpl orderStatsProvider;
+  @InjectMocks
+  private OrderStatsProviderImpl orderStatsProvider;
 
-    private OrderDO todayPaid;
-    private OrderDO todayCompleted;
-    private OrderDO todayPending;
-    private OrderDO yesterday;
+  /**
+   * Verifies that the provider counts only the orders created today for the requested merchant.
+   */
+  @Test
+  void getTodayOrderCount_shouldCountOnlyOrdersCreatedToday() {
+    when(orderRepo.findByMerchantId(20L)).thenReturn(List.of(
+        buildOrder(OrderDO.OrderStatus.PENDING_PAYMENT, new BigDecimal("6.99"),
+            LocalDateTime.of(LocalDate.now(), java.time.LocalTime.NOON)),
+        buildOrder(OrderDO.OrderStatus.PAID, new BigDecimal("8.99"),
+            LocalDateTime.of(LocalDate.now(), java.time.LocalTime.MIDNIGHT.plusHours(8))),
+        buildOrder(OrderDO.OrderStatus.COMPLETED, new BigDecimal("10.99"),
+            LocalDateTime.of(LocalDate.now().minusDays(1), java.time.LocalTime.NOON))
+    ));
 
-    @BeforeEach
-    void setUp() {
-        todayPaid = new OrderDO();
-        todayPaid.setMerchantId(1L);
-        todayPaid.setPrice(new BigDecimal("10.00"));
-        todayPaid.setStatus(OrderDO.OrderStatus.PAID);
-        todayPaid.setCreatedAt(LocalDateTime.now());
+    int count = orderStatsProvider.getTodayOrderCount(20L);
 
-        todayCompleted = new OrderDO();
-        todayCompleted.setMerchantId(1L);
-        todayCompleted.setPrice(new BigDecimal("20.00"));
-        todayCompleted.setStatus(OrderDO.OrderStatus.COMPLETED);
-        todayCompleted.setCreatedAt(LocalDateTime.now());
+    assertEquals(2, count);
+  }
 
-        todayPending = new OrderDO();
-        todayPending.setMerchantId(1L);
-        todayPending.setPrice(new BigDecimal("15.00"));
-        todayPending.setStatus(OrderDO.OrderStatus.PENDING_PAYMENT);
-        todayPending.setCreatedAt(LocalDateTime.now());
+  /**
+   * Verifies that today's revenue includes only paid and completed orders created today.
+   */
+  @Test
+  void getTodayRevenue_shouldIncludeOnlyPaidAndCompletedOrdersCreatedToday() {
+    when(orderRepo.findByMerchantId(20L)).thenReturn(List.of(
+        buildOrder(OrderDO.OrderStatus.PAID, new BigDecimal("6.99"),
+            LocalDateTime.of(LocalDate.now(), java.time.LocalTime.NOON)),
+        buildOrder(OrderDO.OrderStatus.COMPLETED, new BigDecimal("8.99"),
+            LocalDateTime.of(LocalDate.now(), java.time.LocalTime.NOON.plusHours(1))),
+        buildOrder(OrderDO.OrderStatus.PENDING_PAYMENT, new BigDecimal("5.00"),
+            LocalDateTime.of(LocalDate.now(), java.time.LocalTime.NOON.plusHours(2))),
+        buildOrder(OrderDO.OrderStatus.PAID, new BigDecimal("9.50"),
+            LocalDateTime.of(LocalDate.now().minusDays(1), java.time.LocalTime.NOON))
+    ));
 
-        yesterday = new OrderDO();
-        yesterday.setMerchantId(1L);
-        yesterday.setPrice(new BigDecimal("50.00"));
-        yesterday.setStatus(OrderDO.OrderStatus.PAID);
-        yesterday.setCreatedAt(LocalDate.now().minusDays(1).atStartOfDay());
-    }
+    BigDecimal revenue = orderStatsProvider.getTodayRevenue(20L);
 
-    @Test
-    void getTodayOrderCount_filtersToday() {
-        when(orderRepo.findByMerchantId(1L))
-                .thenReturn(List.of(todayPaid, todayCompleted, todayPending, yesterday));
+    assertEquals(new BigDecimal("15.98"), revenue);
+  }
 
-        int count = orderStatsProvider.getTodayOrderCount(1L);
-
-        assertEquals(3, count); // yesterday excluded
-    }
-
-    @Test
-    void getTodayOrderCount_noOrdersToday_returnsZero() {
-        when(orderRepo.findByMerchantId(1L)).thenReturn(List.of(yesterday));
-
-        assertEquals(0, orderStatsProvider.getTodayOrderCount(1L));
-    }
-
-    @Test
-    void getTodayRevenue_filtersByStatusAndDate() {
-        when(orderRepo.findByMerchantId(1L))
-                .thenReturn(List.of(todayPaid, todayCompleted, todayPending, yesterday));
-
-        BigDecimal revenue = orderStatsProvider.getTodayRevenue(1L);
-
-        // todayPaid(10) + todayCompleted(20); todayPending and yesterday excluded
-        assertEquals(new BigDecimal("30.00"), revenue);
-    }
-
-    @Test
-    void getTodayRevenue_onlyPending_returnsZero() {
-        when(orderRepo.findByMerchantId(1L)).thenReturn(List.of(todayPending));
-
-        assertEquals(BigDecimal.ZERO, orderStatsProvider.getTodayRevenue(1L));
-    }
+  /**
+   * Creates an order fixture for the provider test cases.
+   *
+   * @param status    order status to assign
+   * @param price     order price to assign
+   * @param createdAt creation timestamp to assign
+   * @return order fixture for provider calculations
+   */
+  private OrderDO buildOrder(OrderDO.OrderStatus status, BigDecimal price, LocalDateTime createdAt) {
+    return OrderDO.builder()
+        .merchantId(20L)
+        .status(status)
+        .price(price)
+        .createdAt(createdAt)
+        .build();
+  }
 }

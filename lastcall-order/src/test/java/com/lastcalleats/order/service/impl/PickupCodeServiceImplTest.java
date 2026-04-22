@@ -34,172 +34,190 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link PickupCodeServiceImpl}.
+ * Tests the merchant pickup verification flow implemented by {@link PickupCodeServiceImpl}.
+ * The suite covers successful verification, invalid reuse, invalid order state, and QR-based verification paths.
  */
 @ExtendWith(MockitoExtension.class)
 class PickupCodeServiceImplTest {
 
-    @Mock
-    private PickupCodeRepo pickupCodeRepo;
+  @Mock
+  private PickupCodeRepo pickupCodeRepo;
 
-    @Mock
-    private OrderRepo orderRepo;
+  @Mock
+  private OrderRepo orderRepo;
 
-    @Mock
-    private UserRepo userRepo;
+  @Mock
+  private UserRepo userRepo;
 
-    @Mock
-    private ProductListingRepo productListingRepo;
+  @Mock
+  private ProductListingRepo productListingRepo;
 
-    @Mock
-    private ProductTemplateRepo productTemplateRepo;
+  @Mock
+  private ProductTemplateRepo productTemplateRepo;
 
-    @InjectMocks
-    private PickupCodeServiceImpl pickupCodeService;
+  @InjectMocks
+  private PickupCodeServiceImpl pickupCodeService;
 
-    private CodeRequest request;
-    private PickupCodeDO pickupCode;
-    private OrderDO order;
+  private CodeRequest request;
+  private PickupCodeDO pickupCode;
+  private OrderDO order;
 
-    /**
-     * Sets up shared test data.
-     */
-    @BeforeEach
-    void setUp() {
-        request = new CodeRequest();
-        request.setPickupCode("483920");
-        request.setQrCodeContent(null);
+  /**
+   * Initializes the shared request and entity fixtures used across the verification scenarios.
+   */
+  @BeforeEach
+  void setUp() {
+    request = new CodeRequest();
+    request.setPickupCode("483920");
+    request.setQrCodeContent(null);
 
-        pickupCode = PickupCodeDO.builder()
-                .id(1L)
-                .orderId(10L)
-                .numericCode("483920")
-                .qrCode("{\"orderId\":10}")
-                .used(false)
-                .build();
+    pickupCode = PickupCodeDO.builder()
+        .id(1L)
+        .orderId(10L)
+        .numericCode("483920")
+        .qrCode("{\"orderId\":10}")
+        .used(false)
+        .build();
 
-        order = OrderDO.builder()
-                .id(10L)
-                .userId(100L)
-                .listingId(200L)
-                .merchantId(300L)
-                .price(new BigDecimal("8.99"))
-                .status(OrderDO.OrderStatus.PAID)
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
+    order = OrderDO.builder()
+        .id(10L)
+        .userId(100L)
+        .listingId(200L)
+        .merchantId(300L)
+        .price(new BigDecimal("8.99"))
+        .status(OrderDO.OrderStatus.PAID)
+        .createdAt(LocalDateTime.now())
+        .build();
+  }
 
-    /**
-     * Checks that a valid pickup code completes the order and marks the code as used.
-     */
-    @Test
-    void verifyPickupCode_shouldCompleteOrderAndConsumeCode() {
-        UserDO user = UserDO.builder().id(100L).nickname("Alice").build();
-        ProductListingDO listing = ProductListingDO.builder()
-                .id(200L)
-                .templateId(400L)
-                .merchantId(300L)
-                .discountPrice(new BigDecimal("8.99"))
-                .quantity(5)
-                .remainingQuantity(4)
-                .pickupStart(LocalTime.of(18, 0))
-                .pickupEnd(LocalTime.of(20, 0))
-                .date(LocalDate.now())
-                .isAvailable(true)
-                .build();
-        ProductTemplateDO template = ProductTemplateDO.builder()
-                .id(400L)
-                .merchantId(300L)
-                .name("Bakery Bag")
-                .originalPrice(new BigDecimal("14.99"))
-                .isActive(true)
-                .build();
+  /**
+   * Verifies that a valid numeric pickup code completes the order and marks the code as used.
+   */
+  @Test
+  void verifyPickupCode_shouldCompleteOrderAndConsumeCode() {
+    UserDO user = UserDO.builder().id(100L).nickname("Alice").build();
+    ProductListingDO listing = ProductListingDO.builder()
+        .id(200L)
+        .templateId(400L)
+        .merchantId(300L)
+        .discountPrice(new BigDecimal("8.99"))
+        .quantity(5)
+        .remainingQuantity(4)
+        .pickupStart(LocalTime.of(18, 0))
+        .pickupEnd(LocalTime.of(20, 0))
+        .date(LocalDate.now())
+        .isAvailable(true)
+        .build();
+    ProductTemplateDO template = ProductTemplateDO.builder()
+        .id(400L)
+        .merchantId(300L)
+        .name("Bakery Bag")
+        .originalPrice(new BigDecimal("14.99"))
+        .isActive(true)
+        .build();
 
-        when(pickupCodeRepo.findByMerchantIdAndNumericCode(300L, "483920")).thenReturn(Optional.of(pickupCode));
-        when(orderRepo.findById(10L)).thenReturn(Optional.of(order));
-        when(userRepo.findById(100L)).thenReturn(Optional.of(user));
-        when(productListingRepo.findById(200L)).thenReturn(Optional.of(listing));
-        when(productTemplateRepo.findById(400L)).thenReturn(Optional.of(template));
+    when(pickupCodeRepo.findByMerchantIdAndNumericCode(300L, "483920")).thenReturn(
+        Optional.of(pickupCode));
+    when(orderRepo.findById(10L)).thenReturn(Optional.of(order));
+    when(userRepo.findById(100L)).thenReturn(Optional.of(user));
+    when(productListingRepo.findById(200L)).thenReturn(Optional.of(listing));
+    when(productTemplateRepo.findById(400L)).thenReturn(Optional.of(template));
 
-        CodeResponse response = pickupCodeService.verifyPickupCode(300L, request);
+    CodeResponse response = pickupCodeService.verifyPickupCode(300L, request);
 
-        assertEquals(true, response.getSuccess());
-        assertEquals("Alice", response.getCustomerNickname());
-        assertEquals("Bakery Bag", response.getProductName());
-        assertEquals(OrderDO.OrderStatus.COMPLETED, order.getStatus());
-        assertEquals(true, pickupCode.getUsed());
-        verify(orderRepo).save(any(OrderDO.class));
-        verify(pickupCodeRepo).save(any(PickupCodeDO.class));
-    }
+    assertEquals(true, response.getSuccess());
+    assertEquals("Alice", response.getCustomerNickname());
+    assertEquals("Bakery Bag", response.getProductName());
+    assertEquals(OrderDO.OrderStatus.COMPLETED, order.getStatus());
+    assertEquals(true, pickupCode.getUsed());
+    verify(orderRepo).save(any(OrderDO.class));
+    verify(pickupCodeRepo).save(any(PickupCodeDO.class));
+  }
 
-    /**
-     * Checks that a pickup code cannot be used twice.
-     */
-    @Test
-    void verifyPickupCode_shouldThrowWhenCodeAlreadyUsed() {
-        pickupCode.setUsed(true);
-        when(pickupCodeRepo.findByMerchantIdAndNumericCode(300L, "483920")).thenReturn(Optional.of(pickupCode));
+  /**
+   * Verifies that verification fails when the pickup code has already been consumed.
+   */
+  @Test
+  void verifyPickupCode_shouldThrowWhenCodeAlreadyUsed() {
+    pickupCode.setUsed(true);
+    when(pickupCodeRepo.findByMerchantIdAndNumericCode(300L, "483920")).thenReturn(
+        Optional.of(pickupCode));
 
-        BusinessException exception = assertThrows(BusinessException.class,
-                () -> pickupCodeService.verifyPickupCode(300L, request));
+    BusinessException exception = assertThrows(BusinessException.class,
+        () -> pickupCodeService.verifyPickupCode(300L, request));
 
-        assertEquals(ErrorCode.PICKUP_CODE_ALREADY_USED, exception.getErrorCode());
-    }
+    assertEquals(ErrorCode.PICKUP_CODE_ALREADY_USED, exception.getErrorCode());
+  }
 
-    /**
-     * Checks that a pickup code cannot be verified when the order is not paid.
-     */
-    @Test
-    void verifyPickupCode_shouldThrowWhenOrderIsNotPaid() {
-        order.setStatus(OrderDO.OrderStatus.PENDING_PAYMENT);
-        when(pickupCodeRepo.findByMerchantIdAndNumericCode(300L, "483920")).thenReturn(Optional.of(pickupCode));
-        when(orderRepo.findById(10L)).thenReturn(Optional.of(order));
+  /**
+   * Verifies that verification fails when the order is not yet in the paid state.
+   */
+  @Test
+  void verifyPickupCode_shouldThrowWhenOrderIsNotPaid() {
+    order.setStatus(OrderDO.OrderStatus.PENDING_PAYMENT);
+    when(pickupCodeRepo.findByMerchantIdAndNumericCode(300L, "483920")).thenReturn(
+        Optional.of(pickupCode));
+    when(orderRepo.findById(10L)).thenReturn(Optional.of(order));
 
-        BusinessException exception = assertThrows(BusinessException.class,
-                () -> pickupCodeService.verifyPickupCode(300L, request));
+    BusinessException exception = assertThrows(BusinessException.class,
+        () -> pickupCodeService.verifyPickupCode(300L, request));
 
-        assertEquals(ErrorCode.ORDER_STATUS_INVALID, exception.getErrorCode());
-    }
+    assertEquals(ErrorCode.ORDER_STATUS_INVALID, exception.getErrorCode());
+  }
 
-    /**
-     * Checks that a QR string can also complete the order and use the code.
-     */
-    @Test
-    void verifyPickupCode_shouldSupportQrCodeVerification() {
-        CodeRequest qrRequest = new CodeRequest();
-        qrRequest.setQrCodeContent("{\"orderId\":10}");
+  /**
+   * Verifies that verification fails when the request does not contain a numeric code or QR payload.
+   */
+  @Test
+  void verifyPickupCode_shouldThrowWhenRequestHasNoCredential() {
+    CodeRequest emptyRequest = new CodeRequest();
 
-        UserDO user = UserDO.builder().id(100L).nickname("Alice").build();
-        ProductListingDO listing = ProductListingDO.builder()
-                .id(200L)
-                .templateId(400L)
-                .merchantId(300L)
-                .discountPrice(new BigDecimal("8.99"))
-                .quantity(5)
-                .remainingQuantity(4)
-                .pickupStart(LocalTime.of(18, 0))
-                .pickupEnd(LocalTime.of(20, 0))
-                .date(LocalDate.now())
-                .isAvailable(true)
-                .build();
-        ProductTemplateDO template = ProductTemplateDO.builder()
-                .id(400L)
-                .merchantId(300L)
-                .name("Bakery Bag")
-                .originalPrice(new BigDecimal("14.99"))
-                .isActive(true)
-                .build();
+    BusinessException exception = assertThrows(BusinessException.class,
+        () -> pickupCodeService.verifyPickupCode(300L, emptyRequest));
 
-        when(pickupCodeRepo.findByMerchantIdAndQrCode(300L, "{\"orderId\":10}")).thenReturn(Optional.of(pickupCode));
-        when(orderRepo.findById(10L)).thenReturn(Optional.of(order));
-        when(userRepo.findById(100L)).thenReturn(Optional.of(user));
-        when(productListingRepo.findById(200L)).thenReturn(Optional.of(listing));
-        when(productTemplateRepo.findById(400L)).thenReturn(Optional.of(template));
+    assertEquals(ErrorCode.PICKUP_CODE_INVALID, exception.getErrorCode());
+  }
 
-        CodeResponse response = pickupCodeService.verifyPickupCode(300L, qrRequest);
+  /**
+   * Verifies that the service also accepts the stored QR payload as a pickup credential.
+   */
+  @Test
+  void verifyPickupCode_shouldSupportQrCodeVerification() {
+    CodeRequest qrRequest = new CodeRequest();
+    qrRequest.setQrCodeContent("{\"orderId\":10}");
 
-        assertEquals(true, response.getSuccess());
-        assertEquals(OrderDO.OrderStatus.COMPLETED, order.getStatus());
-        assertEquals(true, pickupCode.getUsed());
-    }
+    UserDO user = UserDO.builder().id(100L).nickname("Alice").build();
+    ProductListingDO listing = ProductListingDO.builder()
+        .id(200L)
+        .templateId(400L)
+        .merchantId(300L)
+        .discountPrice(new BigDecimal("8.99"))
+        .quantity(5)
+        .remainingQuantity(4)
+        .pickupStart(LocalTime.of(18, 0))
+        .pickupEnd(LocalTime.of(20, 0))
+        .date(LocalDate.now())
+        .isAvailable(true)
+        .build();
+    ProductTemplateDO template = ProductTemplateDO.builder()
+        .id(400L)
+        .merchantId(300L)
+        .name("Bakery Bag")
+        .originalPrice(new BigDecimal("14.99"))
+        .isActive(true)
+        .build();
+
+    when(pickupCodeRepo.findByMerchantIdAndQrCode(300L, "{\"orderId\":10}")).thenReturn(
+        Optional.of(pickupCode));
+    when(orderRepo.findById(10L)).thenReturn(Optional.of(order));
+    when(userRepo.findById(100L)).thenReturn(Optional.of(user));
+    when(productListingRepo.findById(200L)).thenReturn(Optional.of(listing));
+    when(productTemplateRepo.findById(400L)).thenReturn(Optional.of(template));
+
+    CodeResponse response = pickupCodeService.verifyPickupCode(300L, qrRequest);
+
+    assertEquals(true, response.getSuccess());
+    assertEquals(OrderDO.OrderStatus.COMPLETED, order.getStatus());
+    assertEquals(true, pickupCode.getUsed());
+  }
 }

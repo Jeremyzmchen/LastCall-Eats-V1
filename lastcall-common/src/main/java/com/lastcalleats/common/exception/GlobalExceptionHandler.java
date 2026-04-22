@@ -14,20 +14,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.stream.Collectors;
 
 /**
- * Centralized exception handler applied across all {@code @RestController} classes.
- * Maps known exception types to structured {@link ApiResponse} bodies so clients
- * receive consistent error payloads regardless of which layer throws.
+ * Centralized exception handler for all {@code @RestController} classes.
+ * Maps known exception types to structured {@link ApiResponse} error payloads.
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * Handles business rule violations thrown by the service layer.
-     * The HTTP status is derived from the exception's {@link ErrorCode}.
+     * Handles business rule violations; HTTP status is derived from the exception's {@link ErrorCode}.
      *
      * @param ex the caught business exception
-     * @return a response entity carrying the error code's HTTP status and message
+     * @return response entity with the matching HTTP status and message
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {
@@ -38,11 +36,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles {@code @Valid} failures on request bodies, collecting all field
-     * error messages into a single comma-separated string.
+     * Handles {@code @Valid} failures, joining all field error messages into one string.
      *
-     * @param ex the validation exception produced by Spring MVC
-     * @return 400 with the concatenated field error messages
+     * @param ex the validation exception
+     * @return 400 with the concatenated field errors
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
@@ -54,12 +51,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.fail(400, message));
     }
 
-    /**
-     * Handles Spring Security authentication failures (missing or invalid token).
-     *
-     * @param ex the authentication exception
-     * @return 401 Unauthorized
-     */
+    /** @return 401 for missing or invalid authentication tokens */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException ex) {
         return ResponseEntity
@@ -67,13 +59,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.fail(401, "Unauthorized"));
     }
 
-    /**
-     * Handles Spring Security access denials for authenticated users who lack
-     * the required role or permission.
-     *
-     * @param ex the access denied exception
-     * @return 403 Forbidden
-     */
+    /** @return 403 when an authenticated user lacks the required permission */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity
@@ -82,11 +68,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Catch-all handler for any unrecognized exception. Logs the full stack
-     * trace server-side but returns only a generic message to the client to
-     * avoid leaking internal details.
+     * Catch-all for unrecognized exceptions. Logs the full stack trace server-side
+     * but returns only a generic message to avoid leaking internal details.
      *
-     * @param ex the unexpected exception
      * @return 500 Internal Server Error
      */
     @ExceptionHandler(Exception.class)

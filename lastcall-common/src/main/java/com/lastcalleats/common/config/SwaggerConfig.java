@@ -9,18 +9,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configures the SpringDoc OpenAPI (Swagger UI) documentation for the LastCall Eats API.
- * Registers a Bearer JWT security scheme so that the Swagger UI's "Authorize" button
- * can be used to pass a token when testing protected endpoints interactively.
+ * Configures SpringDoc OpenAPI for the LastCall Eats API.
+ * Registers a Bearer JWT security scheme so the Swagger UI "Authorize" button works on protected endpoints.
  */
 @Configuration
 public class SwaggerConfig {
 
     /**
-     * Builds the {@link OpenAPI} descriptor with project metadata and the
-     * global JWT security requirement applied to all endpoints.
-     *
-     * @return the configured OpenAPI bean picked up by SpringDoc
+     * @return the OpenAPI descriptor with project metadata and global JWT security requirement
      */
     @Bean
     public OpenAPI openAPI() {

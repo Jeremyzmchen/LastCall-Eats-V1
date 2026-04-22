@@ -15,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 /**
- * Default implementation of {@link ReviewService}.
- * Business rule validation (order ownership, completion status, duplicate check)
- * is handled by {@link com.lastcalleats.review.factory.ReviewFactory}; this class
- * is responsible only for persistence and read queries.
+ * Default implementation of {@link ReviewService}. Delegates business rule validation
+ * to {@link com.lastcalleats.review.factory.ReviewFactory} and handles only persistence and queries.
  */
 @Service
 @RequiredArgsConstructor
