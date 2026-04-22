@@ -2,6 +2,8 @@
 target/
 *.class
 
+.github/
+
 # IntelliJ IDEA
 .idea/
 *.iml
